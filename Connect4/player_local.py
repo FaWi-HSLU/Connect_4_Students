@@ -20,9 +20,10 @@ class Player_Local(Player):
        
         """
         super().__init__()  # Initialize id and icon from the abstract Player class
-
-       # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        self.game = kwargs.get('game')
+        if not self.game:
+            raise ValueError("A Connect4 game instance must be provided")
+        self.icon = None
 
     def register_in_game(self) -> str:
         """
