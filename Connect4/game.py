@@ -36,7 +36,13 @@ class Connect4:
     """
     Methods to be exposed to the API later on
     """
-    def get_status(self):
+    def get_status(self) -> :
+        
+        
+
+        if Connect4.__detect_win() == True:
+            return f"{self.id} has win this game!!!"
+        
         """
         Get the game's status.
             - active player (id or icon)
@@ -57,6 +63,8 @@ class Connect4:
         Returns:
             icon:       Player Icon (or None if failed)
         """
+
+
         # TODO
         raise NotImplementedError(f"You need to write this code first")
 
