@@ -9,7 +9,7 @@ class Player_Local(Player):
     Local Player (uses Methods of the Game directly).
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, game:Connect4) -> None:
         """ 
         Initialize a local player.
             Must Implement all Methods from Abstract Player Class
@@ -20,7 +20,7 @@ class Player_Local(Player):
        
         """
         super().__init__()  # Initialize id and icon from the abstract Player class
-        self.game = kwargs.get('game')
+        self.game = game
         if not self.game:
             raise ValueError("A Connect4 game instance must be provided")
         self.icon = None
@@ -32,8 +32,16 @@ class Player_Local(Player):
         Returns:
             str: The player's icon.
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        # Assign an icon to the player. Alternating between 'X' and 'O' for each player.
+        if not self.game.register_player(self.uuid):
+            self.icon = 'X'
+        else:
+            self.icon = 'O' if self.game.players[-1].icon == 'X' else 'X'
+        
+        # Register the player in the game
+        self.game.players.append(self)
+        
+        return self.icon
 
     def is_my_turn(self) -> bool:
         """ 
@@ -63,7 +71,8 @@ class Player_Local(Player):
         Returns:
             int: The column chosen by the player for the move.
         """
-        # TODO
+        col = input("Enter the column number you want to drop your coin in: ")
+        self.game.check_move(col, self.uuid)
         raise NotImplementedError(f"You need to write this code first")
 
     def visualize(self) -> None:
