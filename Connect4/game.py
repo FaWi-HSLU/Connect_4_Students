@@ -1,6 +1,6 @@
 import uuid
 import random
-
+from enum import Enum
 import numpy as np
 
 
@@ -30,28 +30,26 @@ class Connect4:
             - Set the Winner to False
             - etc.
         """
-       # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        self.board = None
+        self.registered = []
+        self.counter = 0
+        self.winner = False
 
     """
     Methods to be exposed to the API later on
     """
-    def get_status(self) -> :
-        
-        
+    def get_status(self):
 
-        if Connect4.__detect_win() == True:
-            return f"{self.id} has win this game!!!"
-        
+        if self.winner == True:
+            return self.activeplayer
+        else:
+            return self.activeplayer, self.counter
         """
         Get the game's status.
             - active player (id or icon)
             - is there a winner? if so who?
             - what turn is it?
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
-
     def register_player(self, player_id:uuid.UUID)->str:
         """ 
         Register a player with a unique ID
@@ -63,10 +61,9 @@ class Connect4:
         Returns:
             icon:       Player Icon (or None if failed)
         """
+        
+        self.registered()
 
-
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
 
 
     def get_board(self)-> np.ndarray:
@@ -76,8 +73,7 @@ class Connect4:
         Returns:
             board
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+
 
 
     def check_move(self, column:int, player_Id:uuid.UUID) -> bool:
@@ -89,8 +85,10 @@ class Connect4:
             col (int):      Selected Column of Coin Drop
             player (str):   Player ID 
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+
+        if True:
+            Connect4.__detect_win()
+            Connect4.__update_status()
         
     """ 
     Internal Method (for Game Logic)
@@ -103,9 +101,16 @@ class Connect4:
             - winner
             - turn_number
         """
-
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        if Connect4.__detect_win() == True:
+                self.winner = True
+        else:
+            if self.counter % 2 == 0:
+                self.player == 1
+                # active ID
+            else:
+                self.player == 2
+                # active ID
+            self.counter += 1
     
 
     def __detect_win(self)->bool:
