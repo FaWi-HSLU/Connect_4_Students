@@ -1,6 +1,4 @@
 import uuid
-import random
-from enum import Enum
 import numpy as np
 
 
@@ -164,7 +162,90 @@ class Connect4:
                 else:
                     counter = 0
 
+        # Check diagonal
+        positions = [
+            ((3,0), (4,1), (5,2), (6,3)),
+            ((3,0), (2,1), (1,2), (0,3)),
+            ((2,0), (3,1), (4,2), (5,3), (6,4)),
+            ((4,0), (3,1), (2,2), (1,3), (0,4)),
+            ((1,0), (2,1), (3,2), (4,3), (5,4), (6,5)),
+            ((5,0), (4,1), (3,2), (2,3), (1,4), (0,5)),
+            ((0,0), (1,1), (2,2), (3,3), (4,4), (5,5), (6,6)),
+            ((6,0), (5,1), (4,2), (3,3), (2,4), (1,5), (0,6)),
+            ((0,1), (1,2), (2,3), (3,4), (4,5), (5,6), (6,7)),
+            ((6,1), (5,2), (4,3), (3,4), (2,5), (1,6), (0,7)),
+            ((0,2), (1,3), (2,4), (3,5), (4,6), (5,7)),
+            ((6,2), (5,3), (4,4), (3,5), (2,6), (1,7)),
+            ((0,3), (1,4), (2,5), (3,6), (4,7)),
+            ((6,3), (5,4), (4,5), (3,6), (2,7)),
+            ((0,4), (1,5), (2,6), (3,7)),
+            ((6,4), (5,5), (4,6), (3,7))
+]
 
-
+        for row, col in positions[0]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[1]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[2]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[3]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[4]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[5]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[6]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        for row, col in positions[7]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    break
+            else:
+                counter = 0
+        
         Connect4.__update_status()
         
