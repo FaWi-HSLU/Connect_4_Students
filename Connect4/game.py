@@ -31,7 +31,7 @@ class Connect4:
             - etc.
         """
         self.board = None
-        self.registered = []
+        self.registered = {"Player1": None, "Player2": None}
         self.counter = 0
         self.winner = False
 
@@ -39,17 +39,17 @@ class Connect4:
     Methods to be exposed to the API later on
     """
     def get_status(self):
-
-        if self.winner == True:
-            return self.activeplayer
-        else:
-            return self.activeplayer, self.counter
         """
         Get the game's status.
             - active player (id or icon)
             - is there a winner? if so who?
             - what turn is it?
         """
+        if self.winner == True:
+            return self.activeplayer
+        else:
+            return self.activeplayer, self.counter
+        
     def register_player(self, player_id:uuid.UUID)->str:
         """ 
         Register a player with a unique ID
@@ -61,10 +61,10 @@ class Connect4:
         Returns:
             icon:       Player Icon (or None if failed)
         """
-        
-        self.registered()
-
-
+        if self.registered["Player1"] == None:
+            self.registered["Player1"] = player_id
+        else:
+            self.registered["Player2"] = player_id
 
     def get_board(self)-> np.ndarray:
         """ 
@@ -73,8 +73,15 @@ class Connect4:
         Returns:
             board
         """
+        self.board = np.ndarray(shape=(7, 8), dtype="<U1")
 
-
+        if self.activeplayer == self.registered.get("Player1"):
+            self.board[self.move] = "X"
+            Connect4.__detect_win()
+        else:
+            self.board[self.move] = "0"
+            Connect4.__detect_win()
+        return self.board
 
     def check_move(self, column:int, player_Id:uuid.UUID) -> bool:
         """ 
@@ -85,11 +92,22 @@ class Connect4:
             col (int):      Selected Column of Coin Drop
             player (str):   Player ID 
         """
-
-        if True:
-            Connect4.__detect_win()
-            Connect4.__update_status()
-        
+        if column >= 1 and column <= 8:
+            col = column - 1
+            values = ["X", "0"]
+            exists = np.isin(self.board[:,col], values)
+            nextrow = np.where(exists)[0]
+            self.move = (nextrow, col)
+            if nextrow > 0:
+                Connect4.get_board(self.move)
+                return True
+            elif nextrow == 0:
+                return f"Game over"
+            else:
+                raise KeyError(f"This couldn't be")
+        else: 
+            return False
+            
     """ 
     Internal Method (for Game Logic)
     """
@@ -104,21 +122,22 @@ class Connect4:
         if Connect4.__detect_win() == True:
                 self.winner = True
         else:
+                # check the next playersturn
             if self.counter % 2 == 0:
-                self.player == 1
-                # active ID
+                self.activeplayer = self.registered.get("Player1")
             else:
-                self.player == 2
-                # active ID
+                self.activeplayer = self.registered.get("Player2")
+                # add a new turn
             self.counter += 1
     
 
-    def __detect_win(self)->bool:
+    def __detect_win(self) -> bool:
         """ 
         Detect if someone has won the game (4 consecutive same pieces).
         
         Returns:
             True if there's a winner, False otherwise
         """    
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+
+        Connect4.__update_status()
+        
