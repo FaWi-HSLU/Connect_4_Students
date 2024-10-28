@@ -32,6 +32,7 @@ class Connect4:
         """
         self.board = None
         self.registered = {"Player1": None, "Player2": None}
+        self.playericon = {self.registered.get("Player1"): "X", self.registered.get("Player2"): "0"}
         self.counter = 0
         self.winner = False
 
@@ -76,10 +77,10 @@ class Connect4:
         self.board = np.ndarray(shape=(7, 8), dtype="<U1")
 
         if self.activeplayer == self.registered.get("Player1"):
-            self.board[self.move] = "X"
+            self.board[self.move] = self.playericon.get(self.activeplayer)
             Connect4.__detect_win()
         else:
-            self.board[self.move] = "0"
+            self.board[self.move] = self.playericon.get(self.activeplayer)
             Connect4.__detect_win()
         return self.board
 
@@ -138,6 +139,32 @@ class Connect4:
         Returns:
             True if there's a winner, False otherwise
         """    
+
+        # Check the columns
+        counter = 0
+
+        for collen in range(self.board.shape[1]):
+            for rowlen in range(self.board.shape[0]):
+                if self.board[rowlen, collen] == self.playericon.get(self.activeplayer):
+                    counter +=1
+                    if counter == 4:
+                        print(f"There is a winner in column {collen + 1}")
+                        break
+                else:
+                    counter = 0
+
+        # Check the rows
+        for rowlen in range(self.board.shape[0]):
+            for collen in range(self.board.shape[1]):
+                if self.board[rowlen, collen] == self.playericon.get(self.activeplayer):
+                    counter += 1
+                    if counter == 4:
+                        print(f"There is a winner in row {rowlen + 1}")
+                        break
+                else:
+                    counter = 0
+
+
 
         Connect4.__update_status()
         
