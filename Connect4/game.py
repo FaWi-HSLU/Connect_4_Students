@@ -30,10 +30,11 @@ class Connect4:
         """
         self.board = None
         self.registered = {"Player1": None, "Player2": None}
-        self.playericon = {self.registered.get("Player1"): "X", self.registered.get("Player2"): "0"}
+        self.playericon = {}
         self.counter = 0
         self.winner = False
-
+        self.activeplayer = None
+        self.move = None
     """
     Methods to be exposed to the API later on
     """
@@ -49,7 +50,7 @@ class Connect4:
         else:
             return self.activeplayer, self.counter
         
-    def register_player(self, player_id:uuid.UUID)->str:
+    def register_player(self, player_id:uuid.UUID) -> str:
         """ 
         Register a player with a unique ID
             Save his ID as one of the local players
@@ -62,8 +63,13 @@ class Connect4:
         """
         if self.registered["Player1"] == None:
             self.registered["Player1"] = player_id
-        else:
+            self.playericon[player_id] = "X"
+        elif self.registered["Player2"] == None:
             self.registered["Player2"] = player_id
+            self.playericon[player_id] = "0"
+        else: 
+            return None #evt. Fehlermeldung falls man nochmals registrieren möchte
+        return self.playericon[player_id]
 
     def get_board(self)-> np.ndarray:
         """ 
@@ -106,7 +112,6 @@ class Connect4:
                 raise KeyError(f"This couldn't be")
         else: 
             return False
-            
     """ 
     Internal Method (for Game Logic)
     """
@@ -133,7 +138,6 @@ class Connect4:
     def __detect_win(self) -> bool:
         """ 
         Detect if someone has won the game (4 consecutive same pieces).
-        
         Returns:
             True if there's a winner, False otherwise
         """    
@@ -180,72 +184,164 @@ class Connect4:
             ((6,3), (5,4), (4,5), (3,6), (2,7)),
             ((0,4), (1,5), (2,6), (3,7)),
             ((6,4), (5,5), (4,6), (3,7))
-]
+            ]
 
         for row, col in positions[0]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[1]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[2]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[3]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[4]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[5]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[6]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
+                return False
+            
         for row, col in positions[7]:
             if self.board[row, col] == self.playericon.get(self.activeplayer):
                 counter += 1
                 if counter == 4:
                     print(f"There is a winner in diagonal {row + 1}")
-                    break
+                    return True
             else:
                 counter = 0
-        
-        Connect4.__update_status()
-        
+                return False
+            
+        for row, col in positions[8]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+            
+        for row, col in positions[9]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+            
+        for row, col in positions[10]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+            
+        for row, col in positions[11]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+            
+        for row, col in positions[12]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+
+        for row, col in positions[13]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+
+        for row, col in positions[14]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False
+
+        for row, col in positions[15]:
+            if self.board[row, col] == self.playericon.get(self.activeplayer):
+                counter += 1
+                if counter == 4:
+                    print(f"There is a winner in diagonal {row + 1}")
+                    return True
+            else:
+                counter = 0
+                return False        
