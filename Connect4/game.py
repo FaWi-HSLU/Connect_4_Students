@@ -143,7 +143,7 @@ class Connect4:
             self.counter += 1
     
 
-    def __detect_win(self) -> bool:
+    def detect_win(self) -> bool:
         """ 
         Detect if someone has won the game (4 consecutive same pieces).
         Returns:
