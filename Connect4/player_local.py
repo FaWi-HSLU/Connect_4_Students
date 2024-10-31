@@ -1,7 +1,6 @@
-
-
 from game import Connect4
 from player import Player
+import uuid
 
 
 class Player_Local(Player):
@@ -27,19 +26,16 @@ class Player_Local(Player):
 
     def register_in_game(self) -> str:
         """
-        Register the player in the game and assign the player an icon.
+        Register the player in the game and assign the player a UUID and icon.
 
         Returns:
             str: The player's icon.
         """
-        # Assign an icon to the player. Alternating between 'X' and 'O' for each player.
-        if not self.game.register_player(self.uuid):
-            self.icon = 'X'
-        else:
-            self.icon = 'O' if self.game.players[-1].icon == 'X' else 'X'
+        # Assign a UUID to the player
+        self.uuid = str(uuid.uuid4())
         
-        # Register the player in the game
-        self.game.players.append(self)
+        # Register the player in the game and get the assigned icon
+        self.icon = self.game.register_player(self.uuid)
         
         return self.icon
 
