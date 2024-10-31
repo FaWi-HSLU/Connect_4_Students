@@ -1,55 +1,23 @@
 # Raspi Connect 4
 Student Project from **Python Advanced**, HS24
 
-
-- [Raspi Connect 4](#raspi-connect-4)
-  - [Administrative Information](#administrative-information)
-- [Complete Game Description](#complete-game-description)
-  - [Game Architecture](#game-architecture)
-    - [Local and Remote Game Variants](#local-and-remote-game-variants)
-  - [Classes](#classes)
-    - [Connect4 - Game](#connect4---game)
-    - [Players](#players)
-    - [Player Types](#player-types)
-    - [Server](#server)
-    - [Local Interactions](#local-interactions)
-    - [Remote Interaction](#remote-interaction)
-  - [Play the Game](#play-the-game)
-    - [Local Game](#local-game)
-    - [Remote Game](#remote-game)
-- [Requirements](#requirements)
-- [Local Game](#local-game-1)
-  - [Architecture](#architecture)
-- [Bug - Fixes:](#bug---fixes)
-  - [Raspberry Pi](#raspberry-pi)
-
-
 ## Administrative Information
 - Project as a semester performance (40%)
 - Teams of two
 - Game modes:
-  - **Local** on the PC 
-    - On the Raspberry Pi (``SenseHat``)
-    - in the terminal (``CLI``)
-  - **Remote**: Over the network via REST API and Flask web server 
-    - On the Raspberry Pi (``SenseHat``)
-    - in the terminal (``CLI``)
+  - Local on the PC (`Player_Local`)
+    - On the Raspberry Pi and in the terminal
+  - Over the network via REST API and Flask web server (`Player_Remote`)
+    - On the Raspberry Pi and in the terminal
   - Implementation of a bot (competition at the end of the semester)
-- Hand In: 
-  - **Due Date: SW13 12.12.24**
-  - Source Code
-  - A 4-5 minute video about the project:
-    - Overview
-    - Difficulties / Highlights, etc.
-    - Demo
+- A 4-5 minute video about the project:
+  - Overview
+  - Difficulties / Highlights, etc.
+  - Demo
 
-
-# Complete Game Description
-The following chapter describes the **entire architecture and functionality of all "sub-steps"** of the Connect4 Game.
-If you are just starting -> go to this section instead, where just the **local game mode** is described.
 
 ## Game Architecture
-The **Connect 4 Game** can be played in **4 different ways**:
+The **Connect 4 Game** can be played in 4 different ways:
 - locally (2 players) on `CLI`
 - locally (2 players) on `SenseHat`
 - remote (2x 1 player) on `CLI`
@@ -58,11 +26,21 @@ The **Connect 4 Game** can be played in **4 different ways**:
 ### Local and Remote Game Variants
 The different game variants are based on the interaction between the **`Player`** classes and the **`Connect4`** game, with the key distinction being how the game coordination is handled:
 
-- **Local Games**: The `Coordinator_Local` has access to two local players and the **`Connect4`** instance. Both players **interact directly with the game logic** (by having access to the same instance of `Connect4`), making moves and visualizing the board either in the `CLI` or on the `SenseHat`. **The entire game (2 players) runs on the same device.**
+- **Local Games**: The `Coordinator_Local` has access to two local players and the **`Connect4`** instance. Both players interact directly with the game logic, making moves and visualizing the board either in the `CLI` or on the `SenseHat`. The entire game runs on the same device.
 
-- **Remote Games**: The `Coordinator_Remote` controls one player, who communicates with the **`Connect4`** logic **via REST API endpoints** which expose the methods of a `Connect4` game. In this case, the **game logic runs on a server**, and **two players on two devices** interact with the game over the network by sending requests to the server.
+- **Remote Games**: The `Coordinator_Remote` controls one player, who communicates with the **`Connect4`** logic via REST API endpoints exposed by the **`Connect4Server`**. In this case, the game logic runs on a server, and both players interact with the game over the network by sending requests to the server.
 
-These four game variant require four different player variants. They are:
+The **`Player`** classes implement certain **abstract methods** to manage the gameplay flow, whether local or remote. The key methods include:
+
+- **`make_move`**: Allows the player to select a column to drop a coin.
+- **`visualize`**: Visualizes the current board state.
+- **`register_in_game`**: Registers the player in the game.
+- **`get_game_status`**: Retrieves the current game status.
+- **`celebrate_win`**: Performs the player's winning celebration.
+
+### Player Types
+- **`CLI Player`**: Input is handled through the console, and the board state is also displayed in the console.
+- **`SenseHat Player`**: Input is handled through the SenseHat joystick module, and the board state is displayed on the LED matrix of the SenseHat.
 
 <div style="text-align: center;">
 <img src="./imgs/class_diagramm.png" alt="class diagramm" width="450"/>
@@ -109,20 +87,6 @@ This class contains the essential game logic:
 - **Move validation** (`check_move()`): Checks whether a move is legal and updates the board accordingly.
 
 - **Winner detection** (`detect_win()`): Detects if a player has four consecutive pieces in a row (horizontally, vertically, or diagonally).
-
-### Players
-
-The **`Player`** classes implement certain **abstract methods** to manage the gameplay flow, whether local or remote. The key methods include:
-
-- **`make_move`**: Allows the player to select a column to drop a coin.
-- **`visualize`**: Visualizes the current board state.
-- **`register_in_game`**: Registers the player in the game.
-- **`get_game_status`**: Retrieves the current game status.
-- **`celebrate_win`**: Performs the player's winning celebration.
-
-### Player Types
-- **`CLI Player`**: Input is handled through the console, and the board state is also displayed in the console.
-- **`SenseHat Player`**: Input is handled through the SenseHat joystick module, and the board state is displayed on the LED matrix of the SenseHat.
 
 ### Server
 The **`Connect4Server`** exposes the game logic to remote players through four API endpoints:
@@ -173,11 +137,11 @@ Make sure you meet the [Requirements](#requirements), and then start either a [l
    - Provide the `IP address` of the server as the target.
    - Play as **Player 2** on the `CLI` or the `SenseHat` (default is `CLI`).
 
-# Requirements
+## Requirements
 To fulfill all requirements to run this game, follow these steps:
 
 1. Create a new `conda` or `venv` **environment** and **activate** it.
-2. `cd` into this folder (where the `setup.py` file is).
+2. `cd` into this folder.
 3. Execute the following command:
 
 ```bash
@@ -187,51 +151,6 @@ pip install .
   This **installs all dependencies** listed in `setup.py`.
 
 4. Play the game in any of the [available versions](#game-architecture).
-
-
-
-# Local Game
-This section only describes the **first substep** of implementing the ``Connect4`` Game.
-Namely how you can create a **local ``Connect4`` Game**, playable on the CommandLine (``CLI``)
-
-
-## Architecture
-The architecture of the local game is as follows:
-
-
-<div style="text-align: center;">
-<img src="./imgs/local_class_diag.png" alt="local_interaction" width="450"/>
-</div>
-
-  - `Coordinator_Local`: Handles scheduling of the game
-    - Has **instance** of `Connect4`
-    - Has **2 instances** of `PlayerLocal`
-    - tells players when what to do 
-      - by calling their methods
-  
-  - `PlayerLocal`: Handles Human Interaction
-    - Has **instance of `Connect4`** (given by `Coordinator_Local`)
-    - Allows a Human to:
-      - Enter a move (via `CLI`)
-      - See the Board (via `CLI`)
-        - calls `get_board()` from `Connect4` for this
-  
-  - `Connec4`: Handles Game Logic
-    - knows which players (by `uuid`) are playing
-      - set with `register_player()`
-    - knows `game_state`
-      - who's players turn it is
-      - if there is a winner
-      - gives out this information with `get_game_state()`
-    - knows what a legal move is:
-      - uses this information in `check_move(col,player)`
-    - can check/make a move from player:
-      - checks first if move is legal
-      - if so: updates the `game_state`
-
-
-
-# Bug - Fixes:
 
 ## Raspberry Pi
 The Raspberry Pi requires a quick **fix** to allow files to be moved, changed, etc.
