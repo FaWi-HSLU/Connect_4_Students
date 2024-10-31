@@ -92,9 +92,13 @@ class Connect4:
         if self.activeplayer == self.registered.get("Player1"):
             self.board[self.move] = self.playericon.get(self.activeplayer)
             Connect4.__detect_win()
+            Connect4.__update_status()
+            Connect4.get_status()
         else:
             self.board[self.move] = self.playericon.get(self.activeplayer)
             Connect4.__detect_win()
+            Connect4.__update_status()
+            Connect4.get_status()
         return self.board
 
     def check_move(self, column:int, player_Id:uuid.UUID) -> bool:
@@ -110,10 +114,10 @@ class Connect4:
             col = column - 1
             values = ["X", "0"]
             exists = np.isin(self.board[:,col], values)
-            nextrow = np.where(exists)[0]
+            nextrow = np.where(exists)[0] - 1
             self.move = (nextrow, col)
             if nextrow > 0:
-                Connect4.get_board(self.move)
+                Connect4.get_board()
                 return True
             elif nextrow == 0:
                 return f"Game over"
@@ -135,7 +139,7 @@ class Connect4:
         if Connect4.__detect_win() == True:
                 self.winner = True
         else:
-                # check the next playersturn
+                # check the next players turn
             if self.counter % 2 == 0:
                 self.activeplayer = self.registered.get("Player1")
             else:

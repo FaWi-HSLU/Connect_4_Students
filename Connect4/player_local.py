@@ -15,8 +15,6 @@ class Player_Local(Player):
 
         Parameters:
             game (Connect4): Instance of Connect4 game passed through kwargs.
-        
-       
         """
         super().__init__()  # Initialize id and icon from the abstract Player class
         self.game = game
