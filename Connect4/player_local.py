@@ -46,8 +46,8 @@ class Player_Local(Player):
         Returns:
             bool: True if it's the player's turn, False otherwise.
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        status = self.game.get_status()  # Spielstatus abfragen
+        return status["active_player"] == self.uuid
 
     def get_game_status(self):
         """
@@ -81,21 +81,50 @@ class Player_Local(Player):
         Returns:
             int: The column chosen by the player for the move.
         """
-        col = input("Enter the column number you want to drop your coin in: ")
-        self.game.check_move(col, self.uuid)
-        raise NotImplementedError(f"You need to write this code first")
+        
+        try:
+            col = int(input("Enter the column number you want to drop your coin in: "))
+            
+            # Zug überprüfen
+            move_valid = self.game.check_move(col, self.uuid)
+            
+            if move_valid == True:
+                print(f"Zug erfolgreich! Stein in Spalte {col} platziert.")
+                return col
+            elif move_valid == "Game over":
+                print("Das Spiel ist vorbei!")
+                return -1
+            else:
+                print("Ungültiger Zug. Wählen Sie eine andere Spalte.")
+        
+        except ValueError:
+            print("Ungültige Eingabe. Bitte geben Sie eine Zahl zwischen 1 und 8 ein.")
 
     def visualize(self) -> None:
         """
         Visualize the current state of the Connect 4 board by printing it to the console.
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        # Aktuellen Zustand des Spielfelds abfragen
+        board = self.game.get_board()
+        
+        # Spielfeld im Konsolenformat darstellen
+        print("\nAktuelles Spielbrett:")
+        print(" 1  2  3  4  5  6  7  8")
+        print("-" * 24)
+        
+        for row in board:
+            row_display = " ".join(cell if cell else "." for cell in row)  # Leere Zellen durch "." ersetzen
+            print(row_display)
+        
+        print("-" * 24)
 
 
     def celebrate_win(self) -> None:
         """
         Celebration of Local CLI Player
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        if self.game._detect_win():
+            print("Congratulations! You have won the game!")
+            # Hier könnte eine Animation oder eine detaillierte Gewinneranzeige erfolgen
+        else:
+            print("The game is still ongoing.")
