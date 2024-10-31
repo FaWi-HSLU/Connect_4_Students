@@ -81,24 +81,20 @@ class Player_Local(Player):
         Returns:
             int: The column chosen by the player for the move.
         """
-        
-        try:
-            col = int(input("Enter the column number you want to drop your coin in: "))
-            
-            # Zug überprüfen
-            move_valid = self.game.check_move(col, self.uuid)
-            
-            if move_valid == True:
-                print(f"Zug erfolgreich! Stein in Spalte {col} platziert.")
-                return col
-            elif move_valid == "Game over":
-                print("Das Spiel ist vorbei!")
-                return -1
-            else:
-                print("Ungültiger Zug. Wählen Sie eine andere Spalte.")
-        
-        except ValueError:
-            print("Ungültige Eingabe. Bitte geben Sie eine Zahl zwischen 1 und 8 ein.")
+        while True:
+            try:
+                col = int(input("Enter the column number you want to drop your coin in (1-8): "))
+                if 1 <= col <= 8:
+                    move_valid = self.game.check_move(col, self.uuid)
+                    if move_valid:
+                        print(f"Move successful! Coin placed in column {col}.")
+                        return col
+                    else:
+                        print("Invalid move. Choose another column.")
+                else:
+                    print("Invalid input. Please enter a number between 1 and 8.")
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
     def visualize(self) -> None:
         """

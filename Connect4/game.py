@@ -1,5 +1,6 @@
 import uuid
 import numpy as np
+from scipy.ndimage import convolve
 
 
 class Connect4:
@@ -28,7 +29,7 @@ class Connect4:
             - Set the Winner to False
             - etc.
         """
-        self.board = None
+        self.board = np.full((7, 8), "", dtype="<U1")  # Initialize the board with empty strings
         self.registered = {"Player1": None, "Player2": None}
         self.playericon = {}
         self.counter = 0
@@ -105,7 +106,7 @@ class Connect4:
             col (int):      Selected Column of Coin Drop
             player (str):   Player ID 
         """
-        if column >= 1 and column <= 8:
+        if 1 <= column <= 8:
             col = column - 1
             values = ["X", "0"]
             exists = np.isin(self.board[:,col], values)
@@ -148,208 +149,37 @@ class Connect4:
         Detect if someone has won the game (4 consecutive same pieces).
         Returns:
             True if there's a winner, False otherwise
-        """    
+        """
+        # Define the kernel for convolution to detect 4 in a row
+        kernel = np.array([1, 1, 1, 1])
 
-        # Check the columns
-        counter = 0
+        # Check horizontal direction
+        horizontal_kernel = kernel
+        horizontal_convolution = convolve(self.board == self.playericon[self.activeplayer], horizontal_kernel, mode='constant', cval=0)
+        if np.any(horizontal_convolution == 4):
+            print(f"There is a winner for player {self.activeplayer} in horizontal direction")
+            return True
 
-        for collen in range(self.board.shape[1]):
-            for rowlen in range(self.board.shape[0]):
-                if self.board[rowlen, collen] == self.playericon.get(self.activeplayer):
-                    counter +=1
-                    if counter == 4:
-                        print(f"There is a winner in column {collen + 1}")
-                        break
-                else:
-                    counter = 0
+        # Check vertical direction
+        vertical_kernel = kernel[:, None]
+        vertical_convolution = convolve(self.board == self.playericon[self.activeplayer], vertical_kernel, mode='constant', cval=0)
+        if np.any(vertical_convolution == 4):
+            print(f"There is a winner for player {self.activeplayer} in vertical direction")
+            return True
 
-        # Check the rows
-        for rowlen in range(self.board.shape[0]):
-            for collen in range(self.board.shape[1]):
-                if self.board[rowlen, collen] == self.playericon.get(self.activeplayer):
-                    counter += 1
-                    if counter == 4:
-                        print(f"There is a winner in row {rowlen + 1}")
-                        break
-                else:
-                    counter = 0
+        # Check diagonal (top-left to bottom-right) direction
+        diagonal_tl_br_kernel = np.eye(4)
+        diagonal_tl_br_convolution = convolve(self.board == self.playericon[self.activeplayer], diagonal_tl_br_kernel, mode='constant', cval=0)
+        if np.any(diagonal_tl_br_convolution == 4):
+            print(f"There is a winner for player {self.activeplayer} in diagonal (top-left to bottom-right) direction")
+            return True
 
-        # Check diagonal
-        positions = [
-            ((3,0), (4,1), (5,2), (6,3)),
-            ((3,0), (2,1), (1,2), (0,3)),
-            ((2,0), (3,1), (4,2), (5,3), (6,4)),
-            ((4,0), (3,1), (2,2), (1,3), (0,4)),
-            ((1,0), (2,1), (3,2), (4,3), (5,4), (6,5)),
-            ((5,0), (4,1), (3,2), (2,3), (1,4), (0,5)),
-            ((0,0), (1,1), (2,2), (3,3), (4,4), (5,5), (6,6)),
-            ((6,0), (5,1), (4,2), (3,3), (2,4), (1,5), (0,6)),
-            ((0,1), (1,2), (2,3), (3,4), (4,5), (5,6), (6,7)),
-            ((6,1), (5,2), (4,3), (3,4), (2,5), (1,6), (0,7)),
-            ((0,2), (1,3), (2,4), (3,5), (4,6), (5,7)),
-            ((6,2), (5,3), (4,4), (3,5), (2,6), (1,7)),
-            ((0,3), (1,4), (2,5), (3,6), (4,7)),
-            ((6,3), (5,4), (4,5), (3,6), (2,7)),
-            ((0,4), (1,5), (2,6), (3,7)),
-            ((6,4), (5,5), (4,6), (3,7))
-            ]
+        # Check diagonal (bottom-left to top-right) direction
+        diagonal_bl_tr_kernel = np.fliplr(np.eye(4))
+        diagonal_bl_tr_convolution = convolve(self.board == self.playericon[self.activeplayer], diagonal_bl_tr_kernel, mode='constant', cval=0)
+        if np.any(diagonal_bl_tr_convolution == 4):
+            print(f"There is a winner for player {self.activeplayer} in diagonal (bottom-left to top-right) direction")
+            return True
 
-        for row, col in positions[0]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[1]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[2]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[3]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[4]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[5]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[6]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[7]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[8]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[9]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[10]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[11]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-            
-        for row, col in positions[12]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-
-        for row, col in positions[13]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-
-        for row, col in positions[14]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
-
-        for row, col in positions[15]:
-            if self.board[row, col] == self.playericon.get(self.activeplayer):
-                counter += 1
-                if counter == 4:
-                    print(f"There is a winner in diagonal {row + 1}")
-                    return True
-            else:
-                counter = 0
-                return False
+        # No winner found
+        return False
