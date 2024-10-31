@@ -57,8 +57,22 @@ class Player_Local(Player):
             - what turn is it?
       
         """
-        # TODO
-        raise NotImplementedError(f"You need to write this code first")
+        status = self.game.get_status()
+        
+        
+        if isinstance(status, tuple):
+            active_player, turn = status
+            return {
+                "active_player": active_player,
+                "turn": turn,
+                "winner": None
+            }
+        else:
+            return {
+                "active_player": status,
+                "turn": None,
+                "winner": status
+            }
 
     def make_move(self) -> int:
         """ 

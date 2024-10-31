@@ -45,10 +45,18 @@ class Connect4:
             - is there a winner? if so who?
             - what turn is it?
         """
-        if self.winner == True:
-            return self.activeplayer
+        if self.winner:
+            return {
+                "active_player": None,
+                "turn": self.counter,
+                "winner": self.activeplayer  # set the winner explicitly
+            }
         else:
-            return self.activeplayer, self.counter
+            return {
+                "active_player": self.activeplayer,
+                "turn": self.counter,
+                "winner": None
+            }
         
     def register_player(self, player_id:uuid.UUID) -> str:
         """ 
