@@ -24,10 +24,12 @@ class Coordinator_Local:
         and checking for a winner until the game concludes.
         """
         # Register both players in the game
+        print("Registering players...")
         self.player1.register_in_game()
         self.player2.register_in_game()
 
         # Main game loop
+        print("Starting main game loop...")
         while not self.game.winner and self.game.counter < self.game.board.size:
             for player in self.players:
                 if self.game.winner:
@@ -35,7 +37,8 @@ class Coordinator_Local:
 
                 if player.is_my_turn():
                     player.visualize()
-                    move = player.make_move()
+                    player.make_move()
+                    print(f"Player {player.uuid} made a move.")
 
                     if self.game.winner:
                         player.celebrate_win()

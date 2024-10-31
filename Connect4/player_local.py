@@ -82,15 +82,15 @@ class Player_Local(Player):
         while True:
             try:
                 col = int(input("Enter the column number you want to drop your coin in (1-8): "))
-                if 1 <= col <= 8:
-                    move_valid = self.game.check_move(col, self.uuid)
-                    if move_valid:
-                        print(f"Move successful! Coin placed in column {col}.")
-                        return col
-                    else:
-                        print("Invalid move. Choose another column.")
+                move_valid = self.game.check_move(col, self.uuid)
+                if move_valid == True:
+                    print(f"Move successful! Coin placed in column {col}.")
+                    return col
+                elif move_valid == "Game over":
+                    print("Game over. No more moves can be made.")
+                    return col
                 else:
-                    print("Invalid input. Please enter a number between 1 and 8.")
+                    print("Invalid move. Please try again.")
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
 

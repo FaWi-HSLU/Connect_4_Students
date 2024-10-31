@@ -29,7 +29,7 @@ class Connect4:
             - Set the Winner to False
             - etc.
         """
-        self.board = np.full((7, 8), "", dtype="<U1")  # Initialize the board with empty strings
+        self.board = np.full((7, 8), " ", dtype="str")  # Initialize the board with empty strings
         self.registered = {"Player1": None, "Player2": None}
         self.playericon = {}
         self.counter = 0
@@ -72,12 +72,14 @@ class Connect4:
         """
         if self.registered["Player1"] == None:
             self.registered["Player1"] = player_id
-            self.playericon[player_id] = "X"
+            self.playericon[player_id] = "O"
         elif self.registered["Player2"] == None:
             self.registered["Player2"] = player_id
-            self.playericon[player_id] = "0"
+            self.playericon[player_id] = "X"
         else: 
             return None #evt. Fehlermeldung falls man nochmals registrieren möchte
+        if self.counter == 0:
+            self.activeplayer = self.registered.get("Player1")
         return self.playericon[player_id]
 
     def get_board(self)-> np.ndarray:
@@ -87,18 +89,20 @@ class Connect4:
         Returns:
             board
         """
-        self.board = np.ndarray(shape=(7, 8), dtype="<U1")
+        return self.board
+        #self.board = np.ndarray(shape=(7, 8), dtype="<U1")
+        self.board = np.full((7, 8), " ", dtype="str")
 
         if self.activeplayer == self.registered.get("Player1"):
             self.board[self.move] = self.playericon.get(self.activeplayer)
-            Connect4.__detect_win()
-            Connect4.__update_status()
-            Connect4.get_status()
+            self.__detect_win()
+            self.__update_status()
+            self.get_status()
         else:
             self.board[self.move] = self.playericon.get(self.activeplayer)
-            Connect4.__detect_win()
-            Connect4.__update_status()
-            Connect4.get_status()
+            self.__detect_win()
+            self.__update_status()
+            self.get_status()
         return self.board
 
     def check_move(self, column:int, player_Id:uuid.UUID) -> bool:
@@ -114,10 +118,12 @@ class Connect4:
             col = column - 1
             values = ["X", "0"]
             exists = np.isin(self.board[:,col], values)
-            nextrow = np.where(exists)[0] - 1
+            # TODO: nextrow richtig berechnen (momentan None)
+            # array([], dtype=int64)
+            nextrow = np.where(exists)[0]
             self.move = (nextrow, col)
             if nextrow > 0:
-                Connect4.get_board()
+                self.board[nextrow][column] = self.playericon.get(player_Id)
                 return True
             elif nextrow == 0:
                 return f"Game over"
@@ -136,7 +142,7 @@ class Connect4:
             - winner
             - turn_number
         """
-        if Connect4.__detect_win() == True:
+        if self.__detect_win() == True:
                 self.winner = True
         else:
                 # check the next players turn
@@ -158,14 +164,14 @@ class Connect4:
         kernel = np.array([1, 1, 1, 1])
 
         # Check horizontal direction
-        horizontal_kernel = kernel
+        horizontal_kernel = kernel.reshape(1, -1)  # Reshape to 2D
         horizontal_convolution = convolve(self.board == self.playericon[self.activeplayer], horizontal_kernel, mode='constant', cval=0)
         if np.any(horizontal_convolution == 4):
             print(f"There is a winner for player {self.activeplayer} in horizontal direction")
             return True
 
         # Check vertical direction
-        vertical_kernel = kernel[:, None]
+        vertical_kernel = kernel.reshape(-1, 1)  # Reshape to 2D
         vertical_convolution = convolve(self.board == self.playericon[self.activeplayer], vertical_kernel, mode='constant', cval=0)
         if np.any(vertical_convolution == 4):
             print(f"There is a winner for player {self.activeplayer} in vertical direction")
