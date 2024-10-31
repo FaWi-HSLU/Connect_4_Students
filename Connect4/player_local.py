@@ -123,8 +123,8 @@ class Player_Local(Player):
         """
         Celebration of Local CLI Player
         """
-        if self.game._detect_win():
-            print("Congratulations! You have won the game!")
-            # Hier könnte eine Animation oder eine detaillierte Gewinneranzeige erfolgen
+        status = self.game.get_status()
+        if status["winner"]:
+            print(f"Congratulations! Player {status['winner']} has won the game!")
         else:
-            print("The game is still ongoing.")
+            print("No win detected yet.")
