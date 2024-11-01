@@ -101,14 +101,14 @@ class Player_Local(Player):
         
         # Spielfeld im Konsolenformat darstellen
         print("\nAktuelles Spielbrett:")
-        print(" 1  2  3  4  5  6  7  8")
-        print("-" * 24)
+        print("  1   2   3   4   5   6   7   8")
+        print("|" + "---|" * 8)
         
         for row in board:
-            row_display = " ".join(cell if cell else "." for cell in row)  # Leere Zellen durch "." ersetzen
+            row_display = "| " + " | ".join(f"{cell}" for cell in row) + " |"
             print(row_display)
         
-        print("-" * 24)
+        print("|" + "---|" * 8)
 
     def celebrate_win(self) -> None:
         """

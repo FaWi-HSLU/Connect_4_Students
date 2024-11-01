@@ -2,9 +2,6 @@ import uuid
 import numpy as np
 from scipy.signal import convolve2d
 
-from Connect_4_Students.Connect4 import player
-
-
 class Connect4:
     """
     Connect 4 Game Class
@@ -74,10 +71,10 @@ class Connect4:
         """
         if self.registered["Player1"] == None:
             self.registered["Player1"] = player_id
-            self.playericon[player_id] = "O"
+            self.playericon[player_id] = "X"
         elif self.registered["Player2"] == None:
             self.registered["Player2"] = player_id
-            self.playericon[player_id] = "X"
+            self.playericon[player_id] = "O"
         else: 
             return None #evt. Fehlermeldung falls man nochmals registrieren möchte
         if self.counter == 0:
@@ -130,15 +127,15 @@ class Connect4:
             - winner
             - turn_number
         """
-        if self.__detect_win() == True:
-                self.winner = True
+        if self.__detect_win(self.playericon.get(self.activeplayer)) == True:
+            self.winner = True
         else:
-                # check the next players turn
+            # check the next players turn
             if self.counter % 2 == 0:
                 self.activeplayer = self.registered.get("Player1")
             else:
                 self.activeplayer = self.registered.get("Player2")
-                # add a new turn
+            # add a new turn
             self.counter += 1
     
 
