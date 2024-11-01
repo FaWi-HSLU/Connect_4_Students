@@ -130,13 +130,13 @@ class Connect4:
         if self.__detect_win(self.playericon.get(self.activeplayer)) == True:
             self.winner = True
         else:
+            # add a new turn
+            self.counter += 1
             # check the next players turn
             if self.counter % 2 == 0:
                 self.activeplayer = self.registered.get("Player1")
             else:
                 self.activeplayer = self.registered.get("Player2")
-            # add a new turn
-            self.counter += 1
     
 
     def __detect_win(self, playericon) -> bool:

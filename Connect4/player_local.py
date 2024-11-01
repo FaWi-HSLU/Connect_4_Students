@@ -79,6 +79,7 @@ class Player_Local(Player):
         """
         while True:
             try:
+                print(f'Player "{self.game.playericon[self.uuid]}" it\'s your turn!')
                 col = int(input("Enter the column number you want to drop your coin in (1-8): "))
                 move_valid = self.game.check_move(col, self.uuid)
                 if move_valid == True:
@@ -116,6 +117,7 @@ class Player_Local(Player):
         """
         status = self.game.get_status()
         if status["winner"]:
+            self.visualize()
             print(f"Congratulations! Player {status['winner']} has won the game!")
         else:
             print("No win detected yet.")
