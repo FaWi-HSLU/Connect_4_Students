@@ -53,11 +53,9 @@ class Player_Local(Player):
             - who is the active player?
             - is there a winner? if so who?
             - what turn is it?
-      
         """
         status = self.game.get_status()
-        
-        
+                
         if isinstance(status, tuple):
             active_player, turn = status
             return {
@@ -111,7 +109,6 @@ class Player_Local(Player):
             print(row_display)
         
         print("-" * 24)
-
 
     def celebrate_win(self) -> None:
         """

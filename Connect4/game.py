@@ -1,6 +1,8 @@
 import uuid
 import numpy as np
-from scipy.ndimage import convolve
+from scipy.signal import convolve2d
+
+from Connect_4_Students.Connect4 import player
 
 
 class Connect4:
@@ -29,7 +31,7 @@ class Connect4:
             - Set the Winner to False
             - etc.
         """
-        self.board = np.full((7, 8), " ", dtype="str")  # Initialize the board with empty strings
+        self.board = np.full((7, 8), " ", dtype="str")
         self.registered = {"Player1": None, "Player2": None}
         self.playericon = {}
         self.counter = 0
@@ -50,7 +52,7 @@ class Connect4:
             return {
                 "active_player": None,
                 "turn": self.counter,
-                "winner": self.activeplayer  # set the winner explicitly
+                "winner": self.activeplayer
             }
         else:
             return {
@@ -90,20 +92,6 @@ class Connect4:
             board
         """
         return self.board
-        #self.board = np.ndarray(shape=(7, 8), dtype="<U1")
-        self.board = np.full((7, 8), " ", dtype="str")
-
-        if self.activeplayer == self.registered.get("Player1"):
-            self.board[self.move] = self.playericon.get(self.activeplayer)
-            self.__detect_win()
-            self.__update_status()
-            self.get_status()
-        else:
-            self.board[self.move] = self.playericon.get(self.activeplayer)
-            self.__detect_win()
-            self.__update_status()
-            self.get_status()
-        return self.board
 
     def check_move(self, column:int, player_Id:uuid.UUID) -> bool:
         """ 
@@ -116,19 +104,19 @@ class Connect4:
         """
         if 1 <= column <= 8:
             col = column - 1
-            values = ["X", "0"]
-            exists = np.isin(self.board[:,col], values)
-            # TODO: nextrow richtig berechnen (momentan None)
-            # array([], dtype=int64)
+            values = [" "]
+            exists = np.isin(self.board[:,col], values, invert=True)
             nextrow = np.where(exists)[0]
-            self.move = (nextrow, col)
-            if nextrow > 0:
-                self.board[nextrow][column] = self.playericon.get(player_Id)
-                return True
-            elif nextrow == 0:
-                return f"Game over"
+            if nextrow.size == 0:
+                nextrow = 6
+            elif nextrow[0] == 7:
+                return False
             else:
-                raise KeyError(f"This couldn't be")
+                nextrow = nextrow[0] - 1
+            self.board[nextrow][col] = self.playericon.get(player_Id)
+            self.__detect_win(self.playericon.get(player_Id))
+            self.__update_status()
+            return True
         else: 
             return False
     """ 
@@ -154,42 +142,28 @@ class Connect4:
             self.counter += 1
     
 
-    def __detect_win(self) -> bool:
+    def __detect_win(self, playericon) -> bool:
         """ 
         Detect if someone has won the game (4 consecutive same pieces).
         Returns:
             True if there's a winner, False otherwise
         """
-        # Define the kernel for convolution to detect 4 in a row
-        kernel = np.array([1, 1, 1, 1])
+               
+        if self.counter == 56:
+            return f"Game over"
 
-        # Check horizontal direction
-        horizontal_kernel = kernel.reshape(1, -1)  # Reshape to 2D
-        horizontal_convolution = convolve(self.board == self.playericon[self.activeplayer], horizontal_kernel, mode='constant', cval=0)
-        if np.any(horizontal_convolution == 4):
-            print(f"There is a winner for player {self.activeplayer} in horizontal direction")
+        horizontal_kernel = np.array([[1, 1, 1, 1]])
+        vertical_kernel = np.array([[1], [1], [1], [1]])
+        diagonal_kernel_1 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+        diagonal_kernel_2 = np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
+        
+        binary_board = (self.board == playericon).astype(int)
+            
+        if (convolve2d(binary_board, horizontal_kernel, mode='valid').max() >= 4 or
+            convolve2d(binary_board, vertical_kernel, mode='valid').max() >= 4 or
+            convolve2d(binary_board, diagonal_kernel_1, mode='valid').max() >= 4 or
+            convolve2d(binary_board, diagonal_kernel_2, mode='valid').max() >= 4):
             return True
-
-        # Check vertical direction
-        vertical_kernel = kernel.reshape(-1, 1)  # Reshape to 2D
-        vertical_convolution = convolve(self.board == self.playericon[self.activeplayer], vertical_kernel, mode='constant', cval=0)
-        if np.any(vertical_convolution == 4):
-            print(f"There is a winner for player {self.activeplayer} in vertical direction")
-            return True
-
-        # Check diagonal (top-left to bottom-right) direction
-        diagonal_tl_br_kernel = np.eye(4)
-        diagonal_tl_br_convolution = convolve(self.board == self.playericon[self.activeplayer], diagonal_tl_br_kernel, mode='constant', cval=0)
-        if np.any(diagonal_tl_br_convolution == 4):
-            print(f"There is a winner for player {self.activeplayer} in diagonal (top-left to bottom-right) direction")
-            return True
-
-        # Check diagonal (bottom-left to top-right) direction
-        diagonal_bl_tr_kernel = np.fliplr(np.eye(4))
-        diagonal_bl_tr_convolution = convolve(self.board == self.playericon[self.activeplayer], diagonal_bl_tr_kernel, mode='constant', cval=0)
-        if np.any(diagonal_bl_tr_convolution == 4):
-            print(f"There is a winner for player {self.activeplayer} in diagonal (bottom-left to top-right) direction")
-            return True
-
+        
         # No winner found
         return False
