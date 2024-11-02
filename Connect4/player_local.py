@@ -119,5 +119,15 @@ class Player_Local(Player):
         if status["winner"]:
             self.visualize()
             print(f"Congratulations! Player {status['winner']} has won the game!")
+            self.restart_game()
         else:
             print("No win detected yet.")
+    def restart_game(self) -> bool:
+        restart = input(f"Do you want to restart the game? [Y/N]: ")
+        if restart == "Y":
+            return True
+        elif restart == "N":
+            print(f"Thanks for playing Connect 4.")
+            return False
+        else: 
+            restart = input(f"Please enter 'Y' or 'N'")

@@ -106,7 +106,7 @@ class Connect4:
             nextrow = np.where(exists)[0]
             if nextrow.size == 0:
                 nextrow = 6
-            elif nextrow[0] == 7:
+            elif nextrow[0] == 0:
                 return False
             else:
                 nextrow = nextrow[0] - 1
@@ -164,3 +164,9 @@ class Connect4:
         
         # No winner found
         return False
+    
+    def new_game(self) -> None:
+        self.board = np.full((7, 8), " ", dtype="str")
+        self.counter = 0
+        self.winner = None
+        self.activeplayer = self.registered.get("Player1")

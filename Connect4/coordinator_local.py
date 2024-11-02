@@ -42,10 +42,17 @@ class Coordinator_Local:
 
                     if self.game.winner:
                         player.celebrate_win()
-                        break
+                        if player.restart_game():
+                            self.game.new_game()
+                        else:
+                            break
 
         if not self.game.winner:
             print("The game is a draw!")
+            if player.restart_game():
+                self.game.new_game()
+            else:
+                break
 
 if __name__ == "__main__":
     # Create a coordinator and start the game
