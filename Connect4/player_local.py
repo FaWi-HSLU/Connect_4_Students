@@ -1,7 +1,6 @@
 from game import Connect4
 from player import Player
 
-
 class Player_Local(Player):
     """ 
     Local Player (uses Methods of the Game directly).

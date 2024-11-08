@@ -1,10 +1,7 @@
 import time
-
 from sense_hat import SenseHat
-
 from game import Connect4
 from player_local import Player_Local
-
 
 class Player_Raspi_Local(Player_Local):
     """ 
@@ -12,7 +9,6 @@ class Player_Raspi_Local(Player_Local):
         Same as Local Player -> with some changed methods
             (uses Methods of Game and SenseHat)
     """
-
     def __init__(self, game:Connect4, **kwargs) -> None:
         """ 
         Initialize a local Raspi player with a shared SenseHat instance.
@@ -25,22 +21,20 @@ class Player_Raspi_Local(Player_Local):
             ValueError: If 'sense' is not provided in kwargs.
         """
         # Initialize the parent class (Player_Local)
-        super().__init__(**kwargs)
+        super().__init__(game)
         self.game = game
         if not self.game:
             raise ValueError("A Connect4 game instance must be provided")
         self.icon = None
-        
+              
+        # Extract the SenseHat instance from kwargs  (only if SHARED instance)
+        self.sense: SenseHat = kwargs.get("sense", None)
+        if not self.sense:
+            raise ValueError(f"{type(self).__name__} requires a 'sense' (SenseHat instance) attribute")
+                
         # Clear the SenseHat
         self.sense.clear()
-        
-        # Extract the SenseHat instance from kwargs  (only if SHARED instance)
-        try:
-            self.sense: SenseHat = kwargs["sense"]
-        except KeyError:
-            raise ValueError(f"{type(self).__name__} requires a 'sense' (SenseHat instance) attribute")
 
-    
     def register_in_game(self):
         """
         Register in game
@@ -49,7 +43,7 @@ class Player_Raspi_Local(Player_Local):
         """
         
         # first do normal register
-        self.icon = super().register_in_game(self.id)         # call method of Parent Class (Player_Local)
+        self.icon = super().register_in_game()         # call method of Parent Class (Player_Local)
         
         if self.icon == 'X':
             self.icon = (0, 255, 0)
@@ -150,13 +144,8 @@ class Player_Raspi_Local(Player_Local):
 
             # Display the crown pattern
             self.sense.set_pixels(crown)
-            time.sleep(5)
-            
-            
+            time.sleep(5)         
             self.restart_game()
             
         else:
             print("No win detected yet.")
-        
-
-

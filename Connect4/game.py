@@ -76,7 +76,7 @@ class Connect4:
             self.registered["Player2"] = player_id
             self.playericon[player_id] = "O"
         else: 
-            return None #evt. Fehlermeldung falls man nochmals registrieren möchte
+            return "Game is already full" 
         if self.counter == 0:
             self.activeplayer = self.registered.get("Player1")
         return self.playericon[player_id]
@@ -101,19 +101,13 @@ class Connect4:
         """
         if 1 <= column <= 8:
             col = column - 1
-            values = [" "]
-            exists = np.isin(self.board[:,col], values, invert=True)
-            nextrow = np.where(exists)[0]
-            if nextrow.size == 0:
-                nextrow = 6
-            elif nextrow[0] == 0:
-                return False
-            else:
-                nextrow = nextrow[0] - 1
-            self.board[nextrow][col] = self.playericon.get(player_Id)
-            self.__detect_win(self.playericon.get(player_Id))
-            self.__update_status()
-            return True
+            for row in range(6, -1, -1):
+                if self.board[row, col] == " ":
+                    self.board[row, col] = self.playericon.get(player_Id)
+                    self.__detect_win(self.playericon.get(player_Id))
+                    self.__update_status()
+                    return True
+            return False
         else: 
             return False
     """ 
@@ -146,9 +140,6 @@ class Connect4:
             True if there's a winner, False otherwise
         """
                
-        if self.counter == 56:
-            return f"Game over"
-
         horizontal_kernel = np.array([[1, 1, 1, 1]])
         vertical_kernel = np.array([[1], [1], [1], [1]])
         diagonal_kernel_1 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])

@@ -1,6 +1,5 @@
 from game import Connect4
-from player_local import Player_Local
-
+import platform
 
 class Coordinator_Local:
     """ 
@@ -12,9 +11,19 @@ class Coordinator_Local:
         Initialize the Coordinator_Local with a Game and 2 Players.
         """
         self.game = Connect4()
-        self.player1 = Player_Local(self.game)
-        self.player2 = Player_Local(self.game)
-        self.players = [self.player1, self.player2]
+
+        if platform.system() == "Windows":
+            from player_local import Player_Local
+            self.player1 = Player_Local(self.game)
+            self.player2 = Player_Local(self.game)
+            self.players = [self.player1, self.player2]
+        else: 
+            from player_raspi_local import Player_Raspi_Local
+            from sense_hat import SenseHat
+            self.sense = SenseHat()
+            self.player1 = Player_Raspi_Local(self.game, sense=self.sense)
+            self.player2 = Player_Raspi_Local(self.game, sense=self.sense)
+            self.players = [self.player1, self.player2]
 
     def play(self):
         """ 
@@ -38,7 +47,7 @@ class Coordinator_Local:
                 if player.is_my_turn():
                     player.visualize()
                     player.make_move()
-                    print(f"Player {player.uuid} made a move.")
+                    print(f"Player {player.id} made a move.")
 
                     if self.game.winner:
                         player.celebrate_win()
