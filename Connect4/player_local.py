@@ -1,6 +1,5 @@
 from game import Connect4
 from player import Player
-import uuid
 
 
 class Player_Local(Player):
@@ -29,11 +28,9 @@ class Player_Local(Player):
         Returns:
             str: The player's icon.
         """
-        # Assign a UUID to the player
-        self.uuid = str(uuid.uuid4())
         
         # Register the player in the game and get the assigned icon
-        self.icon = self.game.register_player(self.uuid)
+        self.icon = self.game.register_player(self.id)
         
         return self.icon
 
@@ -45,7 +42,7 @@ class Player_Local(Player):
             bool: True if it's the player's turn, False otherwise.
         """
         status = self.game.get_status()  # Spielstatus abfragen
-        return status["active_player"] == self.uuid
+        return status["active_player"] == self.id
 
     def get_game_status(self):
         """
@@ -79,9 +76,9 @@ class Player_Local(Player):
         """
         while True:
             try:
-                print(f'Player "{self.game.playericon[self.uuid]}" it\'s your turn!')
+                print(f'Player "{self.game.playericon[self.id]}" it\'s your turn!')
                 col = int(input("Enter the column number you want to drop your coin in (1-8): "))
-                move_valid = self.game.check_move(col, self.uuid)
+                move_valid = self.game.check_move(col, self.id)
                 if move_valid == True:
                     print(f"Move successful! Coin placed in column {col}.")
                     return col
@@ -122,6 +119,7 @@ class Player_Local(Player):
             self.restart_game()
         else:
             print("No win detected yet.")
+            
     def restart_game(self) -> bool:
         restart = input(f"Do you want to restart the game? [Y/N]: ")
         if restart == "Y":
