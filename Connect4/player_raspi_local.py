@@ -117,7 +117,6 @@ class Player_Raspi_Local(Player_Local):
         # Define Colors
         golden = (255, 236, 39)
         ruby = (255, 0, 64)
-        crown_pad = (171, 82, 59)
         
         status = self.game.get_status()
         if status["winner"]:
