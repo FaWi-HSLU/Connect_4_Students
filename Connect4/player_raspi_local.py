@@ -132,10 +132,10 @@ class Player_Raspi_Local(Player_Local):
                 winner_color = (0, 0, 255)
             
             crown = [
+            (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
             (0, 0, 0), golden, (0, 0, 0), golden, golden, (0, 0, 0), golden, (0, 0, 0),
             (0, 0, 0), golden, golden, ruby, ruby, golden, golden, (0, 0, 0),
             (0, 0, 0), (0, 0, 0), golden, golden, golden, golden, (0, 0, 0), (0, 0, 0),
-            (0, 0, 0), (0, 0, 0), crown_pad, crown_pad, crown_pad, crown_pad, (0, 0, 0), (0, 0, 0),
             (0, 0, 0), (0, 0, 0), winner_color, winner_color, winner_color, winner_color, (0, 0, 0), (0, 0, 0),
             (0, 0, 0), (0, 0, 0), winner_color, winner_color, winner_color, winner_color, (0, 0, 0), (0, 0, 0),
             (0, 0, 0), (0, 0, 0), winner_color, winner_color, winner_color, winner_color, (0, 0, 0), (0, 0, 0),
