@@ -20,6 +20,7 @@ class Coordinator_Local:
         else: 
             from player_raspi_local import Player_Raspi_Local
             from sense_hat import SenseHat
+
             self.sense = SenseHat()
             self.player1 = Player_Raspi_Local(self.game, sense=self.sense)
             self.player2 = Player_Raspi_Local(self.game, sense=self.sense)

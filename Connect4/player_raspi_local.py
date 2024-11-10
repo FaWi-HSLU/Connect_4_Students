@@ -96,16 +96,17 @@ class Player_Raspi_Local(Player_Local):
         self.visualize_choice(column)
         while True:
             for event in self.sense.stick.get_events():
-                if event.direction == 'left' and column > 0:
-                    column -= 1
-                elif event.direction == 'right' and column < 7:
-                    column += 1
-                elif event.direction == 'middle':
-                    move_valid = self.game.check_move(column + 1, self.id)
-                    if move_valid:
-                        return column + 1
-                    else:
-                        print("Invalid move. Please try again.")
+                if event.action == 'pressed':
+                    if event.direction == 'left' and column > 0:
+                        column -= 1
+                    elif event.direction == 'right' and column < 7:
+                        column += 1
+                    elif event.direction == 'middle':
+                        move_valid = self.game.check_move(column + 1, self.id)
+                        if move_valid:
+                            return column + 1
+                        else:
+                            print("Invalid move. Please try again.")
                 self.visualize_choice(column)
     
     def celebrate_win(self) -> None:
@@ -148,3 +149,14 @@ class Player_Raspi_Local(Player_Local):
             
         else:
             print("No win detected yet.")
+
+    def restart_game(self) -> bool:
+
+        self.sense.clear()
+        self.sense.show_message("Do you want to restart the game? [YES: left/NO: right]")
+        for event in self.sense.stick.get_events():
+            if event.action == 'pressed':
+                if event.direction == 'left':
+                    return True
+                elif event.direction == 'right':
+                    return False
