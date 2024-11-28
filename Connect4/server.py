@@ -26,7 +26,7 @@ class Connect4Server:
         - Expose API Methods
         """
 
-        #self.game = Connect4()  # Connect4 game instance
+        self.game = Connect4()  # Connect4 game instance
         self.app = Flask(__name__)  # Flask app instance
 
         # Swagger UI Configuration
@@ -63,28 +63,65 @@ class Connect4Server:
         # 1. Expose get_status method
         @self.app.route('/connect4/status', methods=['GET'])
         def get_status():
-            # TODO: return a jasonified version of the game status
-            pass
+            # Call the get_status method from the Connect4 instance (returns a dictionnary)
+            status = self.game.get_status()
+            # Return the status as a JSON response
+            return jsonify(status)
 
 
         # 2. Expose register_player method
         @self.app.route('/connect4/register', methods=['POST'])
         def register_player():
-            # TODO Register the player and return the ICON
-            pass
+            # Generate a unique player ID
+            player_id = uuid.uuid4()
+            # Call the register_player method from the Connect4 instance
+            icon = self.game.register_player(player_id)
+            # Return the player ID and icon as a JSON response
+            return jsonify({"player_id": str(player_id), "icon": icon})
 
 
         # 3. Expose get_board method
         @self.app.route('/connect4/board', methods=['GET'])
         def get_board():
-            # TODO correctly return the Board
-            pass
+            # Call the get_board method from the Connect4 instance
+            board = self.game.get_board()
+            # Convert the NumPy array to a list
+            board_list = board.tolist()
+            # Return the board as a JSON response
+            return jsonify(board_list)
 
         # 4. Expose move method
         @self.app.route('/connect4/make_move', methods=['POST'])
         def make_move():
-            # TODO: make move and return success if made
-            pass
+            data = request.get_json()
+            player_id = data.get('player_id')
+            column = data.get('column')
+
+            # Validate input
+            if not player_id or not column:
+                return jsonify({"error": "Invalid input: player_id and column are required"}), 400
+
+            try:
+                player_id = uuid.UUID(player_id)
+                column = int(column)
+            except ValueError:
+                return jsonify({"error": "Invalid input format: player_id must be a valid UUID and column must be an integer"}), 400
+
+            # Check if the player is registered
+            if player_id not in self.game.registered.values():
+                return jsonify({"error": "Player not registered"}), 400
+
+            # Make the move
+            move_valid = self.game.check_move(column, player_id)
+            if move_valid:
+                status = self.game.get_status()
+                return jsonify({
+                    "success": True,
+                    "board": self.game.get_board().tolist(),
+                    "status": status
+                })
+            else:
+                return jsonify({"error": "Invalid move: column is full or out of bounds"}), 400
 
 
     def run(self, debug=True, host='0.0.0.0', port=5000):
