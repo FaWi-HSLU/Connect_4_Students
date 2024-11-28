@@ -6,7 +6,7 @@ from flask_swagger_ui import get_swaggerui_blueprint        # for swagger docume
 
 
 # local includes
-# from game import Connect4
+from game import Connect4
 
 
 class Connect4Server:
