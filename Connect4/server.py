@@ -1,3 +1,5 @@
+# Server verfügt über Objekt des games
+
 import uuid
 
 import socket                                               # to get own IP
@@ -63,6 +65,11 @@ class Connect4Server:
         # 1. Expose get_status method
         @self.app.route('/connect4/status', methods=['GET'])
         def get_status():
+            
+            
+            # !!! TURN NUMBER !!! muss noch implementiert werden
+            
+            
             # Call the get_status method from the Connect4 instance (returns a dictionnary)
             status = self.game.get_status()
             # Return the status as a JSON response
