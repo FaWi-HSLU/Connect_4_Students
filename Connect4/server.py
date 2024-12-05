@@ -94,11 +94,11 @@ class Connect4Server:
         def check_move():
             # TODO: make move and return success if made
             data = request.get_json()
-            player_icon = data.get("player_icon")
+            player_id = data.get("player_id")
             column = data.get("column") 
-            board[column] = player_icon
+            board[column] = player_id
              # Success
-            return jsonify({"message": "Move Successful"}), 200
+            return jsonify({"success": True})
 
 
     def run(self, debug=True, host='0.0.0.0', port=5000):
