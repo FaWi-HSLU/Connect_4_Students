@@ -1,12 +1,10 @@
-import uuid
-
 import socket                                               # to get own IP
 from flask import Flask, request, jsonify                   # for api
 from flask_swagger_ui import get_swaggerui_blueprint        # for swagger documentation
 
 
 # local includes
-# from game import Connect4
+from game import Connect4
 
 
 class Connect4Server:
@@ -26,7 +24,7 @@ class Connect4Server:
         - Expose API Methods
         """
 
-        #self.game = Connect4()  # Connect4 game instance
+        self.game = Connect4()  # Connect4 game instance
         self.app = Flask(__name__)  # Flask app instance
 
         # Swagger UI Configuration
@@ -75,30 +73,23 @@ class Connect4Server:
         def register_player():
             # TODO Register the player and return the ICON
             data = request.get_json()
-            player_id = data.get("player_id") 
-            # Success
-            return jsonify({"player_icon": "string"})
+            player_id = data.get("player_id")
+            icon = self.game.register_player(player_id)
+            return jsonify({"player_icon": icon})
 
         # 3. Expose get_board method
         @self.app.route('/connect4/board', methods=['GET'])
         def get_board():
-            return jsonify({"board":[
-                            [
-                                "string"
-                            ]
-                        ]
-                    })
+            return jsonify(self.game.get_board().tolist())
 
         # 4. Expose move method
         @self.app.route('/connect4/check_move', methods=['POST'])
         def check_move():
-            # TODO: make move and return success if made
             data = request.get_json()
             player_id = data.get("player_id")
-            column = data.get("column") 
-            board[column] = player_id
-             # Success
-            return jsonify({"success": True})
+            column = data.get("column")
+            success = self.game.check_move(column, player_id)
+            return jsonify({"success": success})
 
 
     def run(self, debug=True, host='0.0.0.0', port=5000):
