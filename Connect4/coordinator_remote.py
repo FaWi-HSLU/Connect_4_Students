@@ -30,15 +30,13 @@ class Coordinator_Remote:
 
         if platform.system() == "Windows":
             from player_remote import Player_Remote
-            self.player1 = Player_Remote(api_url=self.api_url)
-            self.player2 = Player_Remote(api_url=self.api_url)
+            self.player = Player_Remote(api_url=self.api_url)
         else:
             from player_raspi_remote import Player_Raspi_Remote
             from sense_hat import SenseHat
 
             self.sense = SenseHat()
-            self.player1 = Player_Raspi_Remote(api_url=self.api_url, sense=self.sense)
-            self.player2 = Player_Raspi_Remote(api_url=self.api_url, sense=self.sense)
+            self.player = Player_Raspi_Remote(api_url=self.api_url, sense=self.sense)
 
     def wait_for_second_player(self):
         """
@@ -51,9 +49,12 @@ class Coordinator_Remote:
         while True:
             response = requests.get(f"{self.api_url}/connect4/status")
             status = response.json()
-            if status["active_player"]:
+            if status["active_player"] is not None:
                 print("Second player connected.")
                 break
+            else:
+                print("Waiting for second player")
+
             sleep(1)
 
     def play(self):
@@ -63,54 +64,50 @@ class Coordinator_Remote:
         This method manages the game loop, where players take turns making moves,
         checks for a winner, and visualizes the game board.
         """
-        # Register both players
+        # Register player
         print("Registering players...")
-        self.player1.register_in_game()
+        self.player.register_in_game()
         
         # Wait for the second player to connect
         self.wait_for_second_player()
-        
-        self.player2.register_in_game()
 
         # Main game loop
         print("Starting main game loop...")
         while True:
-            for player in [self.player1, self.player2]:
-                player.visualize()
-                column = player.make_move()
-                print(f"Player {player.id} made a move in column {column}")
-                player.visualize()
-                
-                response = requests.get(f"{self.api_url}/connect4/status")
-                status = response.json()
-                if status["winner"]:
-                    player.celebrate_win()
-                    if player.restart_game():
-                        self.new_game()
-                    else:
-                        return
-                    
-                elif status["turn"] == self.player1.board_width * self.player1.board_height:
-                    if player.restart_game():
-                        self.new_game()
-                    else:
-                        return
-                    
-                    
-    def new_game(self):
-        """
+            response = requests.get(f"{self.api_url}/connect4/status")
+            status = response.json()
+            if status["winner"]:
+                if self.player.is_my_turn():
+                    self.player.celebrate_win()
+                    self.player.visualize()
+                else:
+                    print("The other player has won this game!")
+                    self.player.visualize()
+                break
+            elif status["turn"] == self.player.board_width * self.player.board_height:
+                print("The game is a draw!")
+                self.player.visualize()
+                break
+
+            if self.player.is_my_turn():
+                self.player.visualize()
+                self.player.make_move()
+
+
+                                                     
+"""    def new_game(self):
+        """"""
         Start a new game by resetting the board and status.
-        """
-        #TODO TODO TODO /connect4/new_game muss noch gemacht werden
+        """"""
         response = requests.post(f"{self.api_url}/connect4/new_game") 
         if response.status_code == 200:
             print("New game started.")
         else:
-            print("Failed to start a new game.")
+            print("Failed to start a new game.")"""
 
 # To start a game
 if __name__ == "__main__":
-    api_url = "http://localhost:5000"  # Connect 4 API server URL
+    api_url = "http://127.0.1.1:5000"  # Connect 4 API server URL
     
     # Uncomment the following lines to specify different URLs
     # pc_url = "http://172.19.176.1:5000"

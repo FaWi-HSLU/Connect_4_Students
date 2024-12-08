@@ -42,8 +42,6 @@ class Connect4Server:
 
         # Register the Swagger UI blueprint
         self.app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
-
-
         # Define API routes within the constructor
         self.setup_routes()
 
@@ -56,17 +54,18 @@ class Connect4Server:
         def index():
             return "Welcome to the Connect 4 API!"
 
-
-
         # 1. Expose get_status method
         @self.app.route('/connect4/status', methods=['GET'])
         def get_status():
             # TODO: return a jasonified version of the game status
-            return jsonify({"active_player": "string",
-                            "active_id": "string",
-                            "winner": "string",
-                            "turn_number": 0})
-
+            status = self.game.get_status()
+            if self.game.registered["Player2"] is None:
+                status = {
+                "active_player": None,
+                "turn": self.game.counter,
+                "winner": None
+                }
+            return jsonify(status)
 
         # 2. Expose register_player method
         @self.app.route('/connect4/register', methods=['POST'])
@@ -74,8 +73,8 @@ class Connect4Server:
             # TODO Register the player and return the ICON
             data = request.get_json()
             player_id = data.get("player_id")
-            icon = self.game.register_player(player_id)
-            return jsonify({"player_icon": icon})
+            playericon = self.game.register_player(player_id)
+            return jsonify({"player_icon": playericon})
 
         # 3. Expose get_board method
         @self.app.route('/connect4/board', methods=['GET'])
@@ -83,11 +82,12 @@ class Connect4Server:
             return jsonify(self.game.get_board().tolist())
 
         # 4. Expose move method
-        @self.app.route('/connect4/check_move', methods=['POST'])
-        def check_move():
+        @self.app.route('/connect4/make_move', methods=['POST'])
+        def make_move():
             data = request.get_json()
             player_id = data.get("player_id")
             column = data.get("column")
+            print(column, player_id)
             success = self.game.check_move(column, player_id)
             return jsonify({"success": success})
 
@@ -100,7 +100,6 @@ class Connect4Server:
 
         # Start the Flask app
         self.app.run(debug=debug, host=host, port=port)
-
 
 
 # If you want to run the server directly:

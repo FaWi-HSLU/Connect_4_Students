@@ -20,13 +20,13 @@ class Player_Remote(Player):
         """
         Register the player in the game and assign the player an icon.
 
-        Returns:
+        Returns:    
             str: The player's icon.
         """
-        response = requests.post(f"{self.api_url}/connect4/register")
+        response = requests.post(f"{self.api_url}/connect4/register", json={"player_id": str(self.id)})
         if response.status_code == 200:
             data = response.json()
-            self.icon = data["icon"]
+            self.icon = data
             return self.icon
         else:
             raise Exception("Failed to register player")
@@ -61,12 +61,22 @@ class Player_Remote(Player):
         Returns:
             int: The column chosen by the player for the move.
         """
-        column = int(input(f"Player {self.icon}, enter the column (1-8) to drop your coin: "))
-        response = requests.post(f"{self.api_url}/connect4/make_move", json={"player_id": str(self.id), "column": column})
-        if response.status_code == 200:
-            return column
-        else:
-            raise Exception("Invalid move")
+        while True:
+            try:
+                print(f'Player "{self.icon}" it\'s your turn!')
+                col = int(input("Enter the column number you want to drop your coin in (1-8): "))
+                response = requests.post(f"{self.api_url}/connect4/make_move", json={"column": col,"player_id": str(self.id)})
+                if response.status_code == 200:
+                    data = response.json()
+                    self.success = data
+                    if self.success:
+                        return f"Player {self.icon} made a move in column {col}"
+                    else:
+                        return f"Invalid move. Please try again."
+                else:
+                    raise Exception("Failed to get game status")
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
     def visualize(self) -> None:
         """
@@ -89,7 +99,7 @@ class Player_Remote(Player):
 
 # Example usage
 if __name__ == "__main__":
-    api_url = "http://localhost:5000"  # Connect 4 API server URL
+    api_url = "http://10.155.97.133:5000"  # Connect 4 API server URL
     player = Player_Remote(api_url)
     player.register_in_game()
     player.visualize()
