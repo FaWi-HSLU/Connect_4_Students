@@ -92,9 +92,7 @@ class Coordinator_Remote:
             if self.player.is_my_turn():
                 self.player.visualize()
                 self.player.make_move()
-
-
-                                                     
+                                                                     
 """    def new_game(self):
         """"""
         Start a new game by resetting the board and status.

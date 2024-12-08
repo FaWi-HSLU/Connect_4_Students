@@ -9,7 +9,7 @@ class Player_Raspi_Remote(Player_Remote):
         Same as Remote Player -> with some changed methods
             (uses Methods of SenseHat and html requests to communicate with the server)
     """
-    def __init__(self, api_url: str, **kwargs) -> None:
+    def __init__(self, api_url: str) -> None:
         """ 
         Initialize a remote Raspi player with a shared SenseHat instance.
 
@@ -23,13 +23,7 @@ class Player_Raspi_Remote(Player_Remote):
         # Initialize the parent class (Player_Remote)
         super().__init__(api_url)
         self.api_url = api_url
-        self.icon = None
-              
-        # Extract the SenseHat instance from kwargs  (only if SHARED instance)
-        self.sense: SenseHat = kwargs.get("sense", None)
-        if not self.sense:
-            raise ValueError(f"{type(self).__name__} requires a 'sense' (SenseHat instance) attribute")
-                
+        self.sense = SenseHat()      
         # Clear the SenseHat
         self.sense.clear()
 
@@ -39,14 +33,36 @@ class Player_Raspi_Remote(Player_Remote):
             Set Player Icon 
             Set Player Color
         """
-        response = requests.post(f"{self.api_url}/connect4/register")
-        data = response.json()
-        self.icon = data["icon"]
+        response = requests.post(f"{self.api_url}/connect4/register", json={"player_id": str(self.id)})
+        if response.status_code == 200:
+            data = response.json()
+            self.icon = data
+            return self.icon
+        else:
+            raise Exception("Failed to register player")
         
-        if self.icon == 'X':
-            self.icon = (0, 255, 0)
-        if self.icon == 'O':
-            self.icon = (0, 0, 255)
+    def is_my_turn(self) -> bool:
+        """
+        Check if it is the player's turn.
+
+        Returns:
+            bool: True if it's the player's turn, False otherwise.
+        """
+        status = self.get_game_status()
+        return status["active_player"] == str(self.id)
+    
+    def get_game_status(self) -> dict:
+        """
+        Get the game's current status.
+
+        Returns:
+            dict: The game's status.
+        """
+        response = requests.get(f"{self.api_url}/connect4/status")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise Exception("Failed to get game status")
     
     def visualize_choice(self, column:int)->None:
         """ 
@@ -56,9 +72,13 @@ class Player_Raspi_Remote(Player_Remote):
         Parameters:
             column (int):       potentially selected Column during Selection Process
         """
+        if self.icon == 'X':
+            self.icon_color = (0, 255, 0)
+        if self.icon == 'O':
+            self.icon_color = (0, 0, 255)
         for i in range(8):
             if i == column:
-                self.sense.set_pixel(i, 0, self.icon)
+                self.sense.set_pixel(i, 0, self.icon_color)
             else:
                 self.sense.set_pixel(i, 0, (0, 0, 0))
 
@@ -186,7 +206,6 @@ class Player_Raspi_Remote(Player_Remote):
 
         # Start with redo sign
         self.sense.set_pixels(redo_sign)
-
 
         while True:
             for event in self.sense.stick.get_events():
