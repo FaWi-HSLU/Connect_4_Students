@@ -147,6 +147,26 @@ class Player_Raspi_Local(Player_Local):
             sleep(5)         
             self.restart_game()
             
+        elif status["turn"] == self.board_width * self.board_height:
+            self.visualize()
+            sleep(0.5)
+            print("It's a draw")
+
+            draw = [
+            ruby, (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), ruby,
+            (0, 0, 0), ruby, (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), ruby, (0, 0, 0),
+            (0, 0, 0), (0, 0, 0), ruby, (0, 0, 0), (0, 0, 0), ruby, (0, 0, 0), (0, 0, 0),
+            (0, 0, 0), (0, 0, 0), (0, 0, 0), ruby, ruby, (0, 0, 0), (0, 0, 0), (0, 0, 0),
+            (0, 0, 0), (0, 0, 0), (0, 0, 0), ruby, ruby, (0, 0, 0), (0, 0, 0), (0, 0, 0),
+            (0, 0, 0), (0, 0, 0), ruby, (0, 0, 0), (0, 0, 0), ruby, (0, 0, 0), (0, 0, 0),
+            (0, 0, 0), ruby, (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), ruby, (0, 0, 0),
+            ruby, (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), ruby
+            ]
+            # Display the crown pattern
+            self.sense.set_pixels(draw)
+            sleep(5)
+            self.restart_game()
+            
         else:
             print("No win detected yet.")
 

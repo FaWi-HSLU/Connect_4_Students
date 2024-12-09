@@ -1,3 +1,4 @@
+from time import sleep
 from game import Connect4
 from player import Player
 
@@ -62,7 +63,7 @@ class Player_Local(Player):
         else:
             return {
                 "active_player": status,
-                "turn": None,
+                "turn": turn,
                 "winner": status
             }
 
@@ -114,7 +115,12 @@ class Player_Local(Player):
         status = self.game.get_status()
         if status["winner"]:
             self.visualize()
+            sleep(0.5)
             print(f"Congratulations! Player {status['winner']} has won the game!")
+            self.restart_game()
+        elif self.game.counter == self.board_width * self.board_height:
+            self.visualize()
+            sleep(0.5)
             self.restart_game()
         else:
             print("No win detected yet.")

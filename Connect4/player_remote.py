@@ -97,7 +97,18 @@ class Player_Remote(Player):
         """
         Players personal "celebration" on how to visualize a Win.
         """
-        print(f"Player {self.icon} wins! Congratulations!")
+        status = self.get_game_status()
+        if status["winner"]:
+            self.visualize()
+            sleep(0.5)
+            print(f"Congratulations! Player {status['active_player']} has won the game!")
+
+        elif status["turn"] == self.board_width * self.board_height:
+            self.visualize()
+            sleep(0.5)
+            print("It's a draw")
+        else:
+            print("No win detected yet.")
 
 # Example usage
 if __name__ == "__main__":

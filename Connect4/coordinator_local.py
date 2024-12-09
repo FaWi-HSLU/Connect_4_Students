@@ -50,15 +50,8 @@ class Coordinator_Local:
                     player.make_move()
                     print(f"Player {player.id} made a move.")
 
-                    if self.game.winner:
+                    if self.game.winner or self.game.counter == self.game.board.size:
                         player.celebrate_win()
-                        if player.restart_game():
-                            self.game.new_game()
-                        else:
-                            break
-
-                    elif self.game.counter == self.game.board.size:
-                        print("The game is a draw!")
                         if player.restart_game():
                             self.game.new_game()
                         else:

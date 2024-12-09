@@ -72,22 +72,13 @@ class Coordinator_Remote:
         while True:
             response = requests.get(f"{self.api_url}/connect4/status")
             status = response.json()
-            if status["winner"]:
-                if self.player.is_my_turn():
-                    self.player.celebrate_win()
-                    self.player.visualize()
-                else:
-                    print("The other player has won this game!")
-                    self.player.visualize()
+            if status["winner"] or status["turn"] == self.player.board_width * self.player.board_height:
+                self.player.celebrate_win()
                 break
-            elif status["turn"] == self.player.board_width * self.player.board_height:
-                print("The game is a draw!")
-                self.player.visualize()
-                break
-
             if self.player.is_my_turn():
                 self.player.visualize()
                 self.player.make_move()
+                self.player.visualize()
                                                                      
 # To start a game
 if __name__ == "__main__":
