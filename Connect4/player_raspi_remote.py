@@ -103,9 +103,9 @@ class Player_Raspi_Remote(Player_Remote):
                             data = response.json()
                             self.success = data
                             if self.success:
-                                return f"You made a move in column {col}"
+                                return print(f"You made a move in column {col}")
                             else:
-                                return f"Invalid move. Please try again."
+                                return print(f"Invalid move. Please try again.")
                         else:
                             raise Exception("Failed to get game status")
                     self.visualize_choice(col)
@@ -123,7 +123,7 @@ class Player_Raspi_Remote(Player_Remote):
         if status["winner"]:
             self.visualize()
             sleep(0.5)
-            print(f"Congratulations! Player {status["active_player"]} has won the game!")
+            print(f'Congratulations! Player {status["active_player"]} has won the game!')
             
             # Get the color of the winner
             if self.icon == (0, 0, 255):

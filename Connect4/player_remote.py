@@ -72,9 +72,9 @@ class Player_Remote(Player):
                     data = response.json()
                     self.success = data
                     if self.success:
-                        return f"Player {self.icon} made a move in column {col}"
+                        return print(f"Player {self.icon} made a move in column {col}")
                     else:
-                        return f"Invalid move. Please try again."
+                        return print(f"Invalid move. Please try again.")
                 else:
                     raise Exception("Failed to get game status")
             except ValueError:
@@ -101,7 +101,7 @@ class Player_Remote(Player):
         if status["winner"]:
             self.visualize()
             sleep(0.5)
-            print(f"Congratulations! Player {status["active_player"]} has won the game!")
+            print(f'Congratulations! Player {status["active_player"]} has won the game!')
 
         elif status["turn"] == self.board_width * self.board_height:
             self.visualize()
