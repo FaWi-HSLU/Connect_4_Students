@@ -1,3 +1,4 @@
+from time import sleep
 import requests
 import uuid
 from player import Player
@@ -26,7 +27,7 @@ class Player_Remote(Player):
         response = requests.post(f"{self.api_url}/connect4/register", json={"player_id": str(self.id)})
         if response.status_code == 200:
             data = response.json()
-            self.icon = data
+            self.icon = data["player_icon"]
             return self.icon
         else:
             raise Exception("Failed to register player")
@@ -39,6 +40,7 @@ class Player_Remote(Player):
             bool: True if it's the player's turn, False otherwise.
         """
         status = self.get_game_status()
+        sleep(1)
         return status["active_player"] == str(self.id)
 
     def get_game_status(self) -> dict:

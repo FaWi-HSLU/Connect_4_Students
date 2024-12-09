@@ -33,10 +33,7 @@ class Coordinator_Remote:
             self.player = Player_Remote(api_url=self.api_url)
         else:
             from player_raspi_remote import Player_Raspi_Remote
-            from sense_hat import SenseHat
-
-            self.sense = SenseHat()
-            self.player = Player_Raspi_Remote(api_url=self.api_url, sense=self.sense)
+            self.player = Player_Raspi_Remote(api_url=self.api_url)
 
     def wait_for_second_player(self):
         """
@@ -45,7 +42,6 @@ class Coordinator_Remote:
         This method checks the game status until the second player is detected,
         indicating that the game can start.
         """
-
         while True:
             response = requests.get(f"{self.api_url}/connect4/status")
             status = response.json()
@@ -93,16 +89,6 @@ class Coordinator_Remote:
                 self.player.visualize()
                 self.player.make_move()
                                                                      
-"""    def new_game(self):
-        """"""
-        Start a new game by resetting the board and status.
-        """"""
-        response = requests.post(f"{self.api_url}/connect4/new_game") 
-        if response.status_code == 200:
-            print("New game started.")
-        else:
-            print("Failed to start a new game.")"""
-
 # To start a game
 if __name__ == "__main__":
     api_url = "http://127.0.1.1:5000"  # Connect 4 API server URL

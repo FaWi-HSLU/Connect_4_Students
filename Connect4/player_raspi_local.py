@@ -1,4 +1,4 @@
-import time
+from time import sleep
 from sense_hat import SenseHat
 from game import Connect4
 from player_local import Player_Local
@@ -47,7 +47,7 @@ class Player_Raspi_Local(Player_Local):
         
         if self.icon == 'X':
             self.icon = (0, 255, 0)
-        if self.icon == 'O':
+        elif self.icon == 'O':
             self.icon = (0, 0, 255)
     
     def visualize_choice(self, column:int)->None:
@@ -122,7 +122,7 @@ class Player_Raspi_Local(Player_Local):
         status = self.game.get_status()
         if status["winner"]:
             self.visualize()
-            time.sleep(0.5)
+            sleep(0.5)
             print(f"Congratulations! Player {status['winner']} has won the game!")
             
             # Get the color of the winner
@@ -144,7 +144,7 @@ class Player_Raspi_Local(Player_Local):
 
             # Display the crown pattern
             self.sense.set_pixels(crown)
-            time.sleep(5)         
+            sleep(5)         
             self.restart_game()
             
         else:
