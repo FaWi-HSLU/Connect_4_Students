@@ -101,7 +101,7 @@ class Player_Remote(Player):
         if status["winner"]:
             self.visualize()
             sleep(0.5)
-            print(f"Congratulations! Player {status['active_player']} has won the game!")
+            print(f"Congratulations! Player {status["active_player"]} has won the game!")
 
         elif status["turn"] == self.board_width * self.board_height:
             self.visualize()

@@ -123,12 +123,12 @@ class Player_Raspi_Remote(Player_Remote):
         if status["winner"]:
             self.visualize()
             sleep(0.5)
-            print(f"Congratulations! Player {status['active_player']} has won the game!")
+            print(f"Congratulations! Player {status["active_player"]} has won the game!")
             
             # Get the color of the winner
-            if self.icon == "X":
+            if self.icon == (0, 0, 255):
                 winner_color = (0, 255, 0)
-            elif self.icon == "O":
+            elif self.icon == (0, 0, 255):
                 winner_color = (0, 0, 255)
             
             crown = [
