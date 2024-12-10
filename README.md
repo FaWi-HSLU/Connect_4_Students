@@ -4,6 +4,7 @@ Student Project from **Python Advanced**, HS24
 
 
 - [Raspi Connect 4](#raspi-connect-4)
+  - [Wie bekomme ich diesen Code?](#wie-bekomme-ich-diesen-code)
   - [Administrative Information](#administrative-information)
     - [RaspberryPi](#raspberrypi)
 - [Complete Game Description](#complete-game-description)
@@ -26,7 +27,11 @@ Student Project from **Python Advanced**, HS24
   - [Architecture](#architecture)
 - [Bug - Fixes:](#bug---fixes)
   - [Raspberry Pi](#raspberry-pi)
+ 
 
+## Wie bekomme ich diesen Code?
+
+Lies dafür die Anleitung in [FORK_INSTRUCTIONS.md](FORK_INSTRUCTIONS.md)
 
 ## Administrative Information
 - Project as a semester performance
