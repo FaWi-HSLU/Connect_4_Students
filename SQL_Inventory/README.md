@@ -15,14 +15,13 @@ Zudem hat die Firma **eine Liste von Lieferanten.** Diese Information ist in der
 - `vendorID`: eine einzigartige (firmen-interne) Nummer eines Lieferanten
 - `name`: Namen des Lieferanten
 
-Da Bauteile **von verschiedenen Lieferanten bestellt werden können**, muss diese Information ebenfalls gespeichert werden. Dies wird mittel einer der `OrderLookup` **Helfer-Tabelle** gemacht. Diese hat:
+Da **Bauteile** **von verschiedenen Lieferanten bestellt werden können**, muss diese Information ebenfalls gespeichert werden. Dies wird mittel einer der `OrderLookup` **Helfer-Tabelle** gemacht. Diese hat:
 - `itemID`: ID des Bauteils (PK mit `itemID`)
 - `vendorID`: Lieferant des Bauteils (PK mit `itemID`)
 - `orderNr`: Spezifische Bestellnummer vom Bauteil beim Lieferanten
 - `price`: Preis des Bauteiles beim Lieferanten
 
 ### ER - Diagramm
-
 
 <div style="text-align: center;">
 <img src="./imgs/er_diagramm.png" alt="er_diag" width="550"/>
