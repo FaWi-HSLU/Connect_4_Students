@@ -80,11 +80,10 @@ class DatabaseInterface:
         # TODO: Implementieren Sie den Code hier
 
     def end_menu(self):
-        sub_menu = """+----------+-------------------------------------------------+
-|  5        | Beenden                                        |
-+----------+-------------------------------------------------+"""
-        print(sub_menu)
-        print("\nProgramm beendet. Auf Wiedersehen!")
+        print("""+----------+-------------------------------------------------+
+|  5       | Programm beendet. Auf Wiedersehen!              |
++----------+-------------------------------------------------+""")
+
 
     def run(self):
         while True:
