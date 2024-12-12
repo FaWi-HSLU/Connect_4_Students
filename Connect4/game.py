@@ -6,27 +6,30 @@ class Connect4:
     """
     Connect 4 Game Class
 
-        Defines rules of the Game
-            - what is a win
-            - where can you set / not set a coin
-            - how big is the playing field
+    This class defines the rules and state of a Connect 4 game, including:
+        - What constitutes a win
+        - Valid and invalid moves
+        - The size of the playing field
 
-        Also keeps track of the current game  
-            - what is its state
-            - who is the active player?
+    It also keeps track of the current game state, including:
+        - The current state of the board
+        - The active player
+        - The turn counter
+        - The winner, if any
 
-        Is used by the Coordinator
-            -> executes the methods of a Game object
+    The class is used by the Coordinator to execute game methods.
     """
     
     def __init__(self) -> None:
         """ 
-        Init a Connect 4 Game
-            - Create an empty Board
-            - Create to (non - registered and empty) players.
-            - Set the Turn Counter to 0
-            - Set the Winner to False
-            - etc.
+        Initialize a Connect 4 game.
+
+        This method sets up the initial state of the game, including:
+            - Creating an empty board
+            - Initializing two non-registered players
+            - Setting the turn counter to 0
+            - Setting the winner to False
+            - Setting the active player to None
         """
         self.board = np.full((7, 8), " ", dtype="str")
         self.registered = {"Player1": None, "Player2": None}
@@ -35,15 +38,17 @@ class Connect4:
         self.winner = False
         self.activeplayer = None
         self.move = None
-    """
-    Methods to be exposed to the API later on
-    """
+
+
     def get_status(self):
         """
         Get the game's status.
+        
+        Returns:
+            dict: A dictionary containing the following keys:
             - active player (id or icon)
-            - is there a winner? if so who?
-            - what turn is it?
+            - turn number
+            - winner, if any
         """
         if self.winner:
             return {
@@ -60,14 +65,13 @@ class Connect4:
         
     def register_player(self, player_id:uuid.UUID) -> str:
         """ 
-        Register a player with a unique ID
-            Save his ID as one of the local players
+        Register a player with a unique ID and assign a icon.
         
         Parameters:
-            player_id (UUID)    Unique ID
+            player_id (UUID): Unique ID of the player.
 
         Returns:
-            icon:       Player Icon (or None if failed)
+            str: Player Icon if registration is successful, otherwise an error message.
         """
         if self.registered["Player1"] == None:
             self.registered["Player1"] = player_id
@@ -83,21 +87,23 @@ class Connect4:
 
     def get_board(self)-> np.ndarray:
         """ 
-        Return the current board state (For Example an Array of all Elements)
+        Return the current board state
 
         Returns:
-            board
+            np.ndarray: The current state of the board.
         """
         return self.board
 
     def check_move(self, column:int, player_Id:uuid.UUID) -> bool:
         """ 
-        Check move of a certain player is legal
-            If a certain player can make the requested move
+        Check move of a certain player is legal and update the board.
 
         Parameters:
-            col (int):      Selected Column of Coin Drop
-            player (str):   Player ID 
+            column (int): Selected column of coin drop
+            player_Id (uuid.UUID): ID of the player making the move.
+            
+        Returns:
+            bool: True if the move is valid, False otherwise. 
         """
         if 1 <= column <= 8:
             col = column - 1
@@ -110,12 +116,14 @@ class Connect4:
             return False
         else: 
             return False
-    """ 
-    Internal Method (for Game Logic)
-    """
+
     def __update_status(self):
         """ 
-        Update all values for the status (after each successful move)
+        Internal Method (for Game Logic)
+        
+        Update the game status after each successful move.
+        
+        Updates:
             - active player
             - active ID
             - winner
@@ -135,11 +143,14 @@ class Connect4:
 
     def __detect_win(self, playericon) -> bool:
         """ 
-        Detect if someone has won the game (4 consecutive same pieces).
+        Detect if a player has won the game (4 consecutive same pieces).
+
+        Parameters:
+            playericon (str): The icon of the player to check for a win.
+
         Returns:
-            True if there's a winner, False otherwise
-        """
-               
+            bool: True if there's a winner, False otherwise.
+        """         
         horizontal_kernel = np.array([[1, 1, 1, 1]])
         vertical_kernel = np.array([[1], [1], [1], [1]])
         diagonal_kernel_1 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
@@ -157,6 +168,9 @@ class Connect4:
         return False
     
     def new_game(self) -> None:
+        """ 
+        Reset the game to start a new game.
+        """
         self.board = np.full((7, 8), " ", dtype="str")
         self.counter = 0
         self.winner = None
