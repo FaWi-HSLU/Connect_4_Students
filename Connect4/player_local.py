@@ -5,15 +5,20 @@ from player import Player
 class Player_Local(Player):
     """ 
     Local Player (uses Methods of the Game directly).
+    
+    This class represents a local player in the Connect 4 game, who play in the CLI.
+    It implements all methods from the abstract Player class.
     """
 
     def __init__(self, game:Connect4) -> None:
         """ 
         Initialize a local player.
-            Must Implement all Methods from Abstract Player Class
 
         Parameters:
-            game (Connect4): Instance of Connect4 game passed through kwargs.
+            game (Connect4): Instance of Connect4 game.
+        
+        Raises:
+            ValueError: If a Connect4 game instance is not provided.
         """
         super().__init__()  # Initialize id and icon from the abstract Player class
         self.game = game
@@ -47,9 +52,12 @@ class Player_Local(Player):
     def get_game_status(self):
         """
         Get the game's current status.
-            - who is the active player?
-            - is there a winner? if so who?
-            - what turn is it?
+
+        Returns:
+            dict: A dictionary containing the following keys:
+            - active_player: The active player's ID or icon.
+            - turn: The current turn number.
+            - winner: The winner's ID or icon, if any.
         """
         status = self.game.get_status()
                 
@@ -110,7 +118,7 @@ class Player_Local(Player):
 
     def celebrate_win(self) -> None:
         """
-        Celebration of Local CLI Player
+        Celebrate the win of the local CLI player.
         """
         status = self.game.get_status()
         if status["winner"]:
@@ -126,6 +134,12 @@ class Player_Local(Player):
             print("No win detected yet.")
             
     def restart_game(self) -> bool:
+        """
+        Prompt the player to restart the game.
+
+        Returns:
+            bool: True if the player wants to restart, False otherwise.
+        """
         restart = input(f"Do you want to restart the game? [Y/N]: ")
         if restart == "Y":
             return True
