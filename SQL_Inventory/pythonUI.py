@@ -1,5 +1,10 @@
+import sqlite3
+
 class DatabaseInterface:
-    def __init__(self):
+    def __init__(self, db_path:str):
+        self.db = sqlite3.connect(db_path)
+        self.cursor = self.db.cursor()
+
         self.main_menu = """+----------+-------------------------------------------------+
 | Auswahl  | Beschreibung                                    |
 +----------+-------------------------------------------------+
@@ -19,12 +24,18 @@ class DatabaseInterface:
         print(self.main_menu)
 
     def list_vendors(self):
-        sub_menu = """+----------+-------------------------------------------------+
-| 1        | Lieferanten auflisten                           |
-+----------+-------------------------------------------------+"""
-        print(sub_menu)
-        print("\nListe der Lieferanten:")
-        print("\n \nNoch nicht Implementiert... \n \n \n")
+
+        sql_command = "SELECT vendorID,name,url FROM vendors"
+        self.cursor.execute(sql_command)
+
+        print("""+----------+--------------------------------+--------------------------+
+| vendorID        | name                    | url                      |
++----------+--------------------------------+--------------------------+""")
+        for vendorID,name,url in self.cursor:
+            print(f"""| {str(vendorID):<16}| {name:<24}| {url:<25}|
++----------+--------------------------------+--------------------------+""")
+        
+
         # TODO: Implementieren Sie den Code hier
 
     def list_items(self):
@@ -33,9 +44,20 @@ class DatabaseInterface:
 +----------+-------------------------------------------------+"""
         print(sub_menu)
         item_name = input("\nGeben Sie den Artikelnamen ein: ")
-        print(f"\nListe der Artikel mit '{item_name}' im Namen:")
-        print("\n \nNoch nicht Implementiert... \n \n \n")
-        # TODO: Implementieren Sie den Code hier
+
+        # get all items first
+        sql_command = f"SELECT itemID,name,units FROM inventory"
+        self.cursor.execute(sql_command)
+
+        print("""+----------+---------------------+-----------------------+
+| ID       | Name                | Units                 |
++----------+---------------------+-----------------------+""")
+              
+        for elem in self.cursor:
+            id,name,units = elem        # tuple unpacking
+            if item_name.upper() in name.upper():
+                print(f"""| {str(id):<9}| {name:<19} | {str(units):<22}|
++----------+---------------------+-----------------------+""")
 
     def get_orders(self):
         sub_menu = """+----------+-------------------------------------------------+
@@ -43,8 +65,9 @@ class DatabaseInterface:
 +----------+-------------------------------------------------+"""
         print(sub_menu)
         item_id = input("\nGeben Sie die ItemID ein: ")
-        print(f"\nBestellmöglichkeiten für ItemID {item_id}:")
-        print("\n \nNoch nicht Implementiert... \n \n \n")
+        
+
+        sql_command = f"SELECT * FROM orders WHERE id == {item_id}"
         # TODO: Implementieren Sie den Code hier
 
     def scan_item(self):
@@ -82,9 +105,12 @@ class DatabaseInterface:
                 break
             else:
                 print("\nUngültige Eingabe. Bitte wählen Sie eine gültige Option (1-5).\n")
+            
+            # warte bis enter gedrückt zum weitermachen
+            input("Drücker ENTER um zurück zum Hauptmenu zu gelangen")
 
 # Hauptprogramm starten
 if __name__ == "__main__":
     print("Willkommen im Datenbank-Interface! Bitte wählen Sie eine Option:")
-    interface = DatabaseInterface()
+    interface = DatabaseInterface("inventory.db")
     interface.run()
