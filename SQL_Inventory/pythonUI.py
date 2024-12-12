@@ -46,18 +46,17 @@ class DatabaseInterface:
         item_name = input("\nGeben Sie den Artikelnamen ein: ")
 
         # get all items first
-        sql_command = f"SELECT itemID,name,units FROM inventory"
+        sql_command = f"SELECT itemID,name,category,units FROM inventory"
         self.cursor.execute(sql_command)
 
-        print("""+----------+---------------------+-----------------------+
-| ID       | Name                | Units                 |
-+----------+---------------------+-----------------------+""")
+        print("""+----------+---------------------+------------------+-----------------------+
+| ID       | Name                | Category         | Units                 |
++----------+---------------------+------------------+-----------------------+""")
               
-        for elem in self.cursor:
-            id,name,units = elem        # tuple unpacking
+        for id,name,category,units in self.cursor:
             if item_name.upper() in name.upper():
-                print(f"""| {str(id):<9}| {name:<19} | {str(units):<22}|
-+----------+---------------------+-----------------------+""")
+                print(f"""| {str(id):<9}| {name:<19} | {category:<16} | {str(units):<22}|
++----------+---------------------+------------------+-----------------------+""")
 
     def get_orders(self):
         sub_menu = """+----------+-------------------------------------------------+
