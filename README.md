@@ -2,7 +2,6 @@
 
 Student Project from **Python Advanced**, HS24
 
-
 - [Raspi Connect 4](#raspi-connect-4)
   - [Wie bekomme ich diesen Code?](#wie-bekomme-ich-diesen-code)
   - [Administrative Information](#administrative-information)
@@ -32,6 +31,7 @@ Student Project from **Python Advanced**, HS24
 ## Wie bekomme ich diesen Code?
 
 Lies dafür die Anleitung in [FORK_INSTRUCTIONS.md](FORK_INSTRUCTIONS.md)
+
 
 ## Administrative Information
 - Project as a semester performance
