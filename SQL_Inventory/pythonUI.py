@@ -66,8 +66,16 @@ class DatabaseInterface:
         item_id = input("\nGeben Sie die ItemID ein: ")
         
 
-        sql_command = f"SELECT * FROM orders WHERE id == {item_id}"
-        # TODO: Implementieren Sie den Code hier
+        sql_command = f"SELECT itemID,vendorID,orderNr,price FROM orderLookup WHERE itemID == {item_id}"
+        self.cursor.execute(sql_command)
+
+        print("""+----------+-------------+------------------+---------------+
+ ItemID    | vendorID    | orderNr          | Preis [CHF]   |
++----------+-------------+------------------+---------------+""")
+
+        for itemID,vendorID,orderNr,price in self.cursor:
+            print(f"""| {str(itemID):<8} | {str(vendorID):<11} |  {str(orderNr):<16}| {str(price):<13} |
++----------+-------------+------------------+---------------+""")
 
     def scan_item(self):
         sub_menu = """+----------+-------------------------------------------------+
@@ -76,8 +84,27 @@ class DatabaseInterface:
         print(sub_menu)
         order_nr = input("\nGeben Sie die Bestellnummer ein: ")
         print(f"\nScanne Artikel mit Bestellnummer {order_nr}...")
-        print("\n \nNoch nicht Implementiert... \n \n \n")
-        # TODO: Implementieren Sie den Code hier
+        
+        # search for article with this number
+        sql_query = f"SELECT itemID,orderNr FROM orderLookup where orderNr == {order_nr}"
+        self.cursor.execute(sql_query)
+
+        item_ids = []
+        for itemID,orderNr in self.cursor:
+            item_ids.append(itemID)
+        
+        if len(item_ids)>1:
+            print(f"Found Multiple Element with the Same orderNr - select correct ItemID to add to inventory")
+        elif len(item_ids) ==1:
+            sql_query = f"UPDATE inventory SET units = units + ? WHERE itemID = ?;"
+            try:
+                self.cursor.execute(sql_query, (1,itemID))
+            except:
+                self.db.rollback()
+            else:
+                self.db.commit()
+        else:
+            print(f"No Item found with this orderNr")
 
     def end_menu(self):
         print("""+----------+-------------------------------------------------+
@@ -110,5 +137,5 @@ class DatabaseInterface:
 # Hauptprogramm starten
 if __name__ == "__main__":
     print("Willkommen im Datenbank-Interface! Bitte wählen Sie eine Option:")
-    interface = DatabaseInterface("inventory.db")
+    interface = DatabaseInterface("inventory_SW14_2.db")
     interface.run()
