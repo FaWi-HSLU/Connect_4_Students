@@ -72,7 +72,6 @@ class DatabaseInterface:
 +----------+-------------+----------------------+------------+""")
         for itemID,orderNr,price in self.cursor:
             print(f"""|          | {itemID:<11} | {orderNr:<20} | {price:<10} |""")
-
         print("""+----------+-------------+----------------------+------------+""")
 
     def scan_item(self):
@@ -82,11 +81,7 @@ class DatabaseInterface:
         print(sub_menu)
         order_nr = input("\nGeben Sie die Bestellnummer ein: ")
         
-        # itemID: ID des Bauteils (PK mit itemID)
-        # vendorID: Lieferant des Bauteils (PK mit itemID)
-        # orderNr: Spezifische Bestellnummer vom Bauteil beim Lieferanten
-        # price: Pr
-        sql_command = """SELECT itemID,orderNr,price FROM orderLookup"""
+        sql_command = f"""SELECT itemID,orderNr,price FROM orderLookup WHERE orderNr = {order_nr}"""
         
         self.cursor.execute(sql_command)
 
