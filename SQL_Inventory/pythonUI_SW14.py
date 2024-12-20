@@ -36,8 +36,6 @@ class DatabaseInterface:
 +-------------+-------------------------+------------------------------+""")
         
 
-        # TODO: Implementieren Sie den Code hier
-
     def list_items(self):
         sub_menu = """+----------+-------------------------------------------------+
 | 2        | Artikel auflisten (nach Name)                   |
@@ -66,16 +64,15 @@ class DatabaseInterface:
         item_id = input("\nGeben Sie die ItemID ein: ")
         
 
-        sql_command = f"SELECT itemID,vendorID,orderNr,price FROM orderLookup WHERE itemID == {item_id}"
+        sql_command = f"SELECT itemID,orderNr,price FROM orderLookup WHERE itemID == {item_id}"
+        
         self.cursor.execute(sql_command)
-
-        print("""+----------+-------------+------------------+---------------+
- ItemID    | vendorID    | orderNr          | Preis [CHF]   |
-+----------+-------------+------------------+---------------+""")
-
-        for itemID,vendorID,orderNr,price in self.cursor:
-            print(f"""| {str(itemID):<8} | {str(vendorID):<11} |  {str(orderNr):<16}| {str(price):<13} |
-+----------+-------------+------------------+---------------+""")
+        print("""+----------+-------------+----------------------+------------+
+| 3        | itemID      | orderNr              | price CHF  |
++----------+-------------+----------------------+------------+""")
+        for itemID,orderNr,price in self.cursor:
+            print(f"""|          | {itemID:<11} | {orderNr:<20} | {price:<10} |""")
+        print("""+----------+-------------+----------------------+------------+""")
 
     def scan_item(self):
         sub_menu = """+----------+-------------------------------------------------+
@@ -83,28 +80,52 @@ class DatabaseInterface:
 +----------+-------------------------------------------------+"""
         print(sub_menu)
         order_nr = input("\nGeben Sie die Bestellnummer ein: ")
-        print(f"\nScanne Artikel mit Bestellnummer {order_nr}...")
         
-        # search for article with this number
-        sql_query = f"SELECT itemID,orderNr FROM orderLookup where orderNr == {order_nr}"
-        self.cursor.execute(sql_query)
+        sql_command = f"""SELECT itemID,orderNr,price FROM orderLookup WHERE orderNr = {order_nr}"""
+        
+        self.cursor.execute(sql_command)
 
-        item_ids = []
-        for itemID,orderNr in self.cursor:
-            item_ids.append(itemID)
+        orders = {}
+
+        for itemID,orderNr,price in self.cursor:
+            
+            orders[orderNr] = {}
+            orders[orderNr]["itemID"] = itemID
+            orders[orderNr]["price"] = price
+
+        for orderNr in orders:
+            if str(orderNr) == str(order_nr):
+                second_select = f"""SELECT itemID,name from inventory WHERE itemID == {itemID}"""
+                self.cursor.execute(second_select)
+
+                for itemID,name in self.cursor:
+                    answer = input(f"Found item {name} with given orderNr {orderNr} - Do you want to add this? [Y/N]")
+
+                    if answer.upper() == "Y":
+                        
+                        try:
+                            print(f"Adding 1 to {name} with id {itemID}")
+                            update_query = f"""UPDATE inventory SET units = units + 1 WHERE itemID = {itemID};"""
+                            self.cursor.execute(update_query)
+                        except:
+                            self.db.rollback()
+                        else:
+                            self.db.commit()
+                            break
+        print(f"New Inventory:")
+
+        sql_3 = f"""SELECT itemID,name,units FROM inventory WHERE itemID = {itemID}"""
         
-        if len(item_ids)>1:
-            print(f"Found Multiple Element with the Same orderNr - select correct ItemID to add to inventory")
-        elif len(item_ids) ==1:
-            sql_query = f"UPDATE inventory SET units = units + ? WHERE itemID = ?;"
-            try:
-                self.cursor.execute(sql_query, (1,itemID))
-            except:
-                self.db.rollback()
-            else:
-                self.db.commit()
-        else:
-            print(f"No Item found with this orderNr")
+        self.cursor.execute(sql_3)
+
+        print("""+----------+---------------------+-----------------------+
+| ID       | Name                | Units                 |
++----------+---------------------+-----------------------+""")
+        for itemID,name,units in self.cursor:
+             print(f"""| {itemID:<8} | {name:<18} | {units:<21} |""")
+
+        print("""+----------+---------------------+-----------------------+""")
+        
 
     def end_menu(self):
         print("""+----------+-------------------------------------------------+
@@ -137,5 +158,5 @@ class DatabaseInterface:
 # Hauptprogramm starten
 if __name__ == "__main__":
     print("Willkommen im Datenbank-Interface! Bitte wählen Sie eine Option:")
-    interface = DatabaseInterface("inventory_SW14_2.db")
+    interface = DatabaseInterface("inventory_SW14.db")
     interface.run()
