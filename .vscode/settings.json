@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "inventory",
+            "database": "${workspaceFolder:Connect_4_Students}/SQL_Inventory/inventory.db"
+        }
+    ]
+}

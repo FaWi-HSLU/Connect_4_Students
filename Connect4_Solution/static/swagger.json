@@ -1,0 +1,159 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "This is a simple Connect 4 API.",
+      "version": "1.0.0",
+      "title": "Connect 4 API",
+      "contact": {
+        "email": "support@example.com"
+      }
+    },
+    "host": "localhost:5000",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "connect4",
+        "description": "Connect 4 game operations"
+      }
+    ],
+    "paths": {
+      "/connect4/status": {
+        "get": {
+          "tags": ["connect4"],
+          "summary": "Get game status",
+          "description": "Returns the current status of the game.",
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "active_player": {
+                    "type": "string"
+                  },
+                  "active_id": {
+                    "type": "string"
+                  },
+                  "winner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/connect4/register": {
+        "post": {
+          "tags": ["connect4"],
+          "summary": "Register a player",
+          "description": "Register a new player using a unique player ID.",
+          "consumes": ["application/json"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "player",
+              "description": "Player ID for registration",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "player_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "player_icon": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Error response"
+            }
+          }
+        }
+      },
+      "/connect4/board": {
+        "get": {
+          "tags": ["connect4"],
+          "summary": "Get current game board",
+          "description": "Returns the current 8x7 board state.",
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "board": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/connect4/make_move": {
+        "post": {
+          "tags": ["connect4"],
+          "summary": "Check a Move, if legal, make it",
+          "description": "Make a move by specifying the column and player ID.",
+          "consumes": ["application/json"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "move",
+              "description": "Move details",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "column": {
+                    "type": "integer"
+                  },
+                  "player_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Move successful",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Illegal move or error"
+            }
+          }
+        }
+      }
+    }
+  }
+  
